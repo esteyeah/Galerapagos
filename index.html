@@ -33,7 +33,7 @@ body.ar #game,body.ar h1{visibility:hidden}
 .card.fl{animation:fl .9s}
 @keyframes fl{0%{background:var(--lag);transform:scale(1.06)}100%{transform:none}}
 .players{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px}
-.pl{background:var(--panel);border-radius:12px;padding:8px 10px;border:2px solid transparent;font-size:.92rem}
+.pl{position:relative;background:var(--panel);border-radius:12px;padding:8px 10px;border:2px solid transparent;font-size:.92rem}
 .pl.cur{border-color:var(--sand)}.pl.dead{opacity:.4}
 .dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:4px}
 #last{margin:10px 0;padding:10px 14px;background:#0b2229;border-left:5px solid var(--ember);border-radius:8px;min-height:44px}
@@ -185,6 +185,9 @@ svg.hum.hostfig{width:70px;height:126px;flex:none;animation:hostin .7s both}
 @keyframes crossp{from{transform:translateX(-50%) scale(.85)}to{transform:translateX(-50%) scale(1.2)}}
 @keyframes stampin{from{transform:translate(-50%,-50%) rotate(-12deg) scale(3);opacity:0}to{transform:translate(-50%,-50%) rotate(-12deg) scale(1);opacity:1}}
 
+#alp{position:fixed;left:8px;bottom:8px;z-index:55;max-width:250px;background:#0b2229ee;color:#f3efe0;border:2px solid #e6c88a;border-radius:12px;padding:6px 10px;font:600 .8rem sans-serif}
+#alp h4{margin:0;font-size:.85rem;cursor:pointer}#alp div{margin-top:4px}#alp small{opacity:.8;font-weight:500}
+.ally{position:absolute;top:-8px;right:-4px;font-size:1.05rem;filter:drop-shadow(0 0 4px #e6c88a)}
 #qm{position:fixed;top:8px;right:8px;z-index:60;background:#0b2229e0;color:#f3efe0;border:2px solid #e6c88a;border-radius:10px;padding:6px 12px;font:700 .85rem sans-serif;cursor:pointer}
 #qmenu{position:fixed;inset:0;background:#000b;z-index:70;display:none;align-items:center;justify-content:center;padding:16px}
 #qmenu.on{display:flex}#qmenu .qb{background:var(--panel,#14303a);color:var(--ink,#f3efe0);border:3px solid #e6c88a;border-radius:16px;padding:18px;max-width:380px;width:100%;text-align:center;display:flex;flex-direction:column;gap:10px}
@@ -391,7 +394,7 @@ function render(){
  {const grp=koh&&G.kmode==='teams',cardP=(p,i)=>{const tc=grp?`background:${p.col}30;${G.cur===p?'':'border-color:'+p.col+'aa;'}`:'';return `<div class="pl ${p.alive?'':'dead'} ${G.cur===p?'cur':''}" style="${tc}"><span class="dot" style="background:${p.col}"></span>${i===G.first?'👑 ':''}<b>${esc(p.name)}</b> ${p.bot?'🤖':p.remote?'🌐':'🧑'}<br>${healthTxt(p)}${hb(p)} · ${p.hand.length} carte(s)</div>`};
   $('#pls').innerHTML=grp?Array.from({length:G.nt||2},(_,t)=>(G.merged?'':`<div class="tribeh" style="--cc:${TEAMS[t].col}">${esc(TEAMS[t].name)}</div>`)+G.pl.map((p,i)=>[p,i]).filter(x=>x[0].tribe===t).map(x=>cardP(x[0],x[1])).join('')).join(''):G.pl.map(cardP).join('')}
  $('#hand').innerHTML=viewer&&viewer.alive?'<b>Ta main :</b> '+(viewer.hand.map(k=>`<button class="c" data-k="${k}">${C[k][0]} ${C[k][1]}</button>`).join('')||'vide'):'';
- detail()}
+ detail();try{allyOverlay()}catch(e){}}
 function canPlay(p,k){return[...WK,...FK,'vaudou','reveil','somn','bois'].includes(k)||(k==='rev'&&p.hand.includes('cart'))||(k==='bateau'&&p.hand.includes('scotch'))||(k==='scotch'&&p.hand.includes('bateau'))}
 function detail(){const k=G.sel,d=$('#detail');if(!k||!viewer||!viewer.hand.includes(k)){d.innerHTML='';return}
  const can=G.pend&&G.cur===viewer;
@@ -561,7 +564,7 @@ async function searchIsland(p){const c=camp(p);
  if(k==='banane'&&Math.random()<.2){const m=members(p.camp).length;c.food=Math.min(36,c.food+m);
   await fx(`<div class="fxt">${esc(p.name)} fouille l'île…</div><div class="fxbig">🍌🍌🍌</div><p>Un énorme régime de bananes ! Toute l'équipe est nourrie (+${m} nourriture).</p>`,2800);
   log(`🍌 ${esc(p.name)} trouve un régime de bananes : toute l'équipe est nourrie (+${m} nourriture) !`);return render()}
- await fx(`<div class="fxt">${esc(p.name)} fouille l'île…</div><div class="wcard"><div class="flip"><div class="cb">🌴</div><div class="ft">${k==='rien'?'🍃':C[k][0]}<small>${see?(k==='rien'?'Rien trouvé':C[k][1]):'carte cachée'}</small></div></div></div>`,2000);
+ await fx(`<div class="fxt">${esc(p.name)} fouille l'île…</div><div class="wcard"><div class="flip"><div class="cb">🌴</div><div class="ft">${see?(k==='rien'?'🍃':C[k][0]):'🃏'}<small>${see?(k==='rien'?'Rien trouvé':C[k][1]):'carte cachée'}</small></div></div></div>`,2000);
  if(k==='rien')log(`🍃 ${esc(p.name)} fouille l'île et ne trouve rien.`);else{p.hand.push(k);log(`🌴 ${esc(p.name)} fouille l'île et trouve quelque chose.`);
   if(!p.bot&&!G.fast){const r=await ask(`🌴 Tu as trouvé : <b>${cn(k)}</b>.<br>Veux-tu le montrer aux autres ?`,['👁 Montrer à tous','🤫 Garder le secret'],p);
    if(r===0){log(`👁 ${esc(p.name)} montre sa trouvaille : ${cn(k)}.`);await fx(`<div class="fxt">${esc(p.name)} montre sa trouvaille</div><div class="fxbig">${C[k][0]}</div><p>${C[k][1]}</p>`,2200)}}}
@@ -2160,6 +2163,24 @@ async function tieBreaker(tied){
   if(b==='B')return order[i]}
  return order[order.length-1]}
 
+
+/* ----- alliances : panneau permanent + marques visibles par toi seul ----- */
+function hnote(p,s){p.hist=p.hist||[];p.hist.push(String(s).replace(/<[^>]+>/g,''));if(p.hist.length>8)p.hist.shift()}
+function alInfo(p){return{al:alOf(p).map(a=>a.m.filter(x=>x.alive&&x!==p).map(x=>x.name)).filter(l=>l.length),msg:(p.hist||[]).slice(-6)}}
+function allyOverlay(){
+ let iv=null;
+ if(NET.on&&NET.role==='guest')iv=NET.alMap?(NET.alMap[NET.myPeer]||{al:[],msg:[]}):null;
+ else if(G&&G.mode==='koh'&&G.al&&viewer&&!viewer.bot)iv=alInfo(viewer);
+ let box=$('#alp');
+ if(!iv){if(box)box.remove();document.querySelectorAll('#pls .ally').forEach(e=>e.remove());return}
+ const names=new Set([].concat(...iv.al));
+ document.querySelectorAll('#pls .pl').forEach(c=>{const b=c.querySelector('b'),n=b?b.textContent:'',has=c.querySelector('.ally');
+  if(names.has(n)&&!has){const s=document.createElement('span');s.className='ally';s.textContent='🤝';s.title='Allié secret';c.appendChild(s)}else if(!names.has(n)&&has)has.remove()});
+ if(!box){box=document.createElement('div');box.id='alp';box.innerHTML='<h4></h4><div></div>';document.body.appendChild(box);box.firstChild.onclick=()=>{box.dataset.c=box.dataset.c==='1'?'0':'1';allyOverlay()}}
+ const open=box.dataset.c!=='1';box.firstChild.textContent=(open?'▾ ':'▸ ')+'🤝 Mes alliances secrètes';
+ const body=box.lastChild;body.style.display=open?'block':'none';
+ const t=(iv.al.length?iv.al.map(l=>'🤝 '+l.join(', ')).join('\n'):'Aucune alliance pour l\'instant')+(iv.msg.length?'\n✉️ '+iv.msg.join('\n✉️ '):'');
+ if(body.dataset.t!==t){body.dataset.t=t;body.innerHTML='';t.split('\n').forEach(l=>{const d=document.createElement('div');d.textContent=l;body.appendChild(d)})}}
 /* ---------- diplomatie : chat, alliances cachées, votes concertés ---------- */
 const alOf=p=>(G.al||[]).filter(a=>a.m.includes(p));
 const alNames=a=>a.m.filter(x=>x.alive).map(x=>esc(x.name)).join(', ');
@@ -2212,12 +2233,12 @@ async function diplomacy(when,cands){
     const ms=await ask(`Message pour ${esc(t.name)} :`,['🗳️ « Vote avec moi contre… »','🛡️ « Je te protège, je ne voterai pas contre toi »','⚠️ « Méfie-toi de… »','↩ Annuler'],h);if(ms===3)continue;
     let x=null;if(ms!==1){const pool=alive().filter(y=>y!==h&&y!==t);if(!pool.length)continue;x=pool[await ask('Qui est visé ?',pool.map(y=>esc(y.name)),h)]}
     const txt=ms===0?`« Vote avec moi contre ${esc(x.name)}. »`:ms===1?'« Je te protège : je ne voterai pas contre toi. »':`« Méfie-toi de ${esc(x.name)}. »`;
-    if(!t.bot){t.inbox=t.inbox||[];t.inbox.push(`🤫 <b>${esc(h.name)}</b> : ${txt}`);if(ms===1){h.trust=h.trust||new Set()}await ask(`Message envoyé à ${esc(t.name)}.`,['OK'],h)}
+    if(!t.bot){t.inbox=t.inbox||[];t.inbox.push(`🤫 <b>${esc(h.name)}</b> : ${txt}`);hnote(t,`${h.name} : ${txt}`);if(ms===1){h.trust=h.trust||new Set()}await ask(`Message envoyé à ${esc(t.name)}.`,['OK'],h)}
     else{let rep;
      if(ms===0){const ok=Math.random()<.45+(allied(h,t)?.3:0)+(t.trust&&t.trust.has(h)?.1:0);if(ok){t.plan=x;rep=`👍 <b>${esc(t.name)}</b> : « D'accord, je vote ${esc(x.name)} avec toi. »`}else rep=`🤔 <b>${esc(t.name)}</b> : « Je ne suis pas sûr… je vais réfléchir. »`}
      else if(ms===1){t.trust=t.trust||new Set();t.trust.add(h);if(t.plan===h)t.plan=null;rep=`🤝 <b>${esc(t.name)}</b> : « Merci, je ne voterai pas contre toi non plus. »`}
      else{if(Math.random()<.4)t.plan=x;rep=`😮 <b>${esc(t.name)}</b> : « Merci de me prévenir. »`}
-     await ask(rep,['OK'],h)}}
+     hnote(h,rep);await ask(rep,['OK'],h)}}
    else if(k==='all'){const pool=others.filter(x=>!allied(h,x));if(!pool.length){await ask('Tu es déjà allié(e) avec tout le monde.',['OK'],h);continue}
     const t=pool[await ask('Avec qui veux-tu t\'allier en secret ?',pool.map(y=>esc(y.name)),h)];
     if(t.bot||t.remote||G.humans<=1||true){const ok=await propose(h,t);await ask(ok?`🤝 <b>${esc(t.name)}</b> accepte : vous êtes alliés en secret.`:`❌ <b>${esc(t.name)}</b> refuse l'alliance.`,['OK'],h)}}
@@ -2517,7 +2538,7 @@ function netHandle(d,m){
   return}
  if(m.peer!==NET.host)return;
  if(d.to&&d.to!==NET.myPeer)return;
- if(d.k==='u')netGuestU(d);else if(d.k==='req')netGuestReq(d);else if(d.k==='cancel')netGuestCancel(d);else if(d.k==='play')netGuestPlay(d);else if(d.k==='fr'&&d.from!==NET.myPeer&&typeof d.n==='string'){if(d.end)netSpec(d.n,'',true);else if(!NET.busy&&typeof d.img==='string'&&d.img.length<3300&&/^[A-Za-z0-9+/=]+$/.test(d.img))netSpec(d.n,d.img)}}
+ if(d.k==='u')netGuestU(d);else if(d.k==='req')netGuestReq(d);else if(d.k==='cancel')netGuestCancel(d);else if(d.k==='play')netGuestPlay(d);else if(d.k==='fr'&&d.from!==NET.myPeer&&typeof d.n==='string'){if(d.end)netSpec(d.n,'',true);else if(typeof d.img==='string'&&d.img.length<3300&&/^[A-Za-z0-9+/=]+$/.test(d.img))netSpec(d.n,d.img)}}
 
 /* ----- connexion au salon ----- */
 /* ----- hors claude.ai : mise en relation par PeerJS (connexion directe entre navigateurs, l'hôte fait le relais) ----- */
@@ -2585,15 +2606,15 @@ function netSpec(name,img,end){
  const key=String(name).slice(0,24);let e=NETFR[key];
  if(end){if(e){e.el.remove();delete NETFR[key]}return}
  if(!e){const el=document.createElement('div');el.style.cssText='background:#0b2229ee;border:2px solid #e6c88a;border-radius:10px;padding:4px;color:#f3efe0;font:700 .72rem sans-serif;text-align:center';el.innerHTML='<div class="sn"></div><img style="display:block;width:160px;border-radius:6px;margin-top:2px">';box.appendChild(el);e=NETFR[key]={el}}
- e.el.firstChild.textContent='👀 '+key;e.el.lastChild.src='data:image/jpeg;base64,'+img;e.t=Date.now();
+ e.el.firstChild.textContent='👀 '+key;e.el.lastChild.src='data:image/jpeg;base64,'+img;e.t=Date.now();{const n=Object.keys(NETFR).length;box.querySelectorAll('img').forEach(i=>i.style.width=(n>3?104:n>2?126:160)+'px')}
  clearTimeout(e.to);e.to=setTimeout(()=>{if(NETFR[key]===e){e.el.remove();delete NETFR[key]}},3500)}
-function netFrame(name){
+function netFrame(name,extra){
  if(NET.q.length>4)return;
  const cs=[...document.querySelectorAll('#arena canvas,#fx canvas')].filter(c=>c.width>50&&c.height>30&&c.offsetParent);if(!cs.length)return;
  const c=cs.sort((a,b)=>b.width*b.height-a.width*a.height)[0];
  try{const w=144,h=Math.max(20,Math.round(w*c.height/c.width)),o=NET.fc||(NET.fc=document.createElement('canvas'));o.width=w;o.height=h;o.getContext('2d').drawImage(c,0,0,w,h);
   let q=.45,s=o.toDataURL('image/jpeg',q);while(s.length>3000&&q>.1){q-=.07;s=o.toDataURL('image/jpeg',q)}
-  if(s.length>3100)return;netSend({k:'fr',n:name,img:s.slice(23)})}catch(e){}}
+  if(s.length>3100)return;netSend({k:'fr',n:name,img:s.slice(23),...(extra||{})});return true}catch(e){}}
 function netPeers(){if(!NET.room)return;const ps=NET.room.peers();
  ps.forEach(p=>{if(p.presence&&p.presence.role==='guest'&&!p.isMe&&!NET.ord.includes(p.peer))NET.ord.push(p.peer)});
  const me=ps.find(p=>p.isMe&&p.sameTab);if(me)NET.myPeer=me.peer;
@@ -2614,17 +2635,23 @@ function netMirror(force){
  if(!NET.on||NET.role!=='host'||!NET.started||!G||!G.pl)return;
  if(!force&&NET.q.length>10)return;
  const F={};
- try{F.h1=$('#h1').textContent;F.bar=$('#bar').innerHTML;F.pls=$('#pls').innerHTML;F.last=$('#last').innerHTML;
+ try{F.h1=$('#h1').textContent;F.bar=$('#bar').innerHTML;F.pls=$('#pls').innerHTML.replace(/<span class="ally"[^>]*>[^<]*<\/span>/g,'');F.last=$('#last').innerHTML;
   F.log=[...$('#log').children].slice(-40).map(e=>e.outerHTML).join('');
   const fx=$('#fx');F.fx=fx.classList.contains('on')?fx.innerHTML:'';
   const ar=$('#arena');F.ar=ar.classList.contains('on')?(ar.querySelector('canvas')?NETWAIT:ar.innerHTML):'';
   F.md=(G.over&&!$('#modal').hidden)?$('#setup').innerHTML:'';
   const hd={};G.pl.forEach(p=>{if(p.remote&&p.peer)hd[p.peer]=p.alive?p.hand:null});F.hd=JSON.stringify(hd);
+  if(G.mode==='koh'&&G.al){const al={};G.pl.forEach(p=>{if(p.remote&&p.peer)al[p.peer]=alInfo(p)});F.al=JSON.stringify(al)}
   F.mt=JSON.stringify({mode:G.mode,kmode:G.kmode,diff:G.diff,nt:G.nt})}catch(e){return}
  for(const f in F){const v=F[f],ch=NET.sent[f]!==v;if(ch){NET.seq[f]=(NET.seq[f]||0)+1;NET.sent[f]=v}
   if(ch||force)netPush(f,v,NET.seq[f])}}
 async function netPush(f,v,q){const p=await netPack(v);netSend({k:'u',f,q,v:p})}
-function netStart(){NET.started=true;NET.sent={};NET.seq={};NET.hb=Date.now();try{NET.room.presence({role:'host',n:NET.name,st:1})}catch(e){}netMirror(true)}
+function netHostFrame(){
+ if(NET.role!=='host'||!NET.started||!netGuests().length)return;
+ const ar=$('#arena'),on=ar.classList.contains('on')&&ar.querySelector('canvas');
+ const me=G.pl&&G.pl.find(p=>!p.remote&&!p.bot),nm=me?me.name:NET.name;
+ if(on){if(netFrame(nm,{from:'host'}))NET.hf=1}else if(NET.hf){NET.hf=0;netSend({k:'fr',n:nm,end:1,from:'host'})}}
+function netStart(){clearInterval(NET.hfi);NET.hfi=setInterval(netHostFrame,380);NET.started=true;NET.sent={};NET.seq={};NET.hb=Date.now();try{NET.room.presence({role:'host',n:NET.name,st:1})}catch(e){}netMirror(true)}
 function netAssign(pl){const gs=netGuests();
  pl.forEach((p,i)=>{if(i===0){p.bot=false;return}const g=gs[i-1];
   if(g){p.remote=true;p.bot=false;p.peer=g.peer;p.gname=g.raw;p.name=g.n}else p.bot=true});
@@ -2698,15 +2725,16 @@ function netApplyField(f,v){
  if(f==='mt'){netClientStart(JSON.parse(v));return}
  if(!NET.begun)return;
  if(f==='h1')$('#h1').textContent=String(v).slice(0,60);
- else if(f==='bar'||f==='pls'||f==='last')$('#'+f).innerHTML=san(v);
+ else if(f==='bar'||f==='pls'||f==='last'){$('#'+f).innerHTML=san(v);if(f==='pls')allyOverlay()}
  else if(f==='log'){const l=$('#log');l.innerHTML=san(v);l.scrollTop=l.scrollHeight}
  else if(f==='hd'){NET.hmap=JSON.parse(v)||{};netHand()}
- else if(f==='fx'||f==='ar'){if(NET.busy)return;const el=$(f==='fx'?'#fx':'#arena');
+ else if(f==='al'){NET.alMap=JSON.parse(v)||{};allyOverlay()}
+ else if(f==='fx'||f==='ar'){if(NET.busy||NET.act)return;const el=$(f==='fx'?'#fx':'#arena');
   if(!v){el.className='';el.innerHTML='';if(f==='ar')try{document.body.classList.remove('ar')}catch(e){}}
   else{el.className='on';el.innerHTML=san(v);if(f==='ar')try{document.body.classList.add('ar')}catch(e){}else el.onclick=()=>{el.className='';el.innerHTML=''}}}
  else if(f==='md'){const m=$('#modal'),s=$('#setup');if(v){const t=document.createElement('div');t.innerHTML=san(v);t.querySelectorAll('button').forEach(b=>b.remove());m.hidden=false;s.onclick=null;s.innerHTML=t.innerHTML+'<button class="big" onclick="location.reload()">Quitter</button>'}}
  }catch(e){console.warn('apply',f,e)}}
-function netReapply(){['bar','pls','last','log','hd','fx','ar','md'].forEach(f=>{if(NET.cur[f]!==undefined)netApplyField(f,NET.cur[f])})}
+function netReapply(){['bar','pls','last','log','hd','al','fx','ar','md'].forEach(f=>{if(NET.cur[f]!==undefined)netApplyField(f,NET.cur[f])})}
 function netHand(){if(!NET.v)return;const h=NET.hmap[NET.myPeer];NET.v.alive=Array.isArray(h);
  if(Array.isArray(h))NET.v.hand=h.filter(k=>C[k]);
  $('#hand').innerHTML=NET.v.alive?'<b>Ta main :</b> '+(NET.v.hand.map(k=>`<button class="c" data-k="${k}">${C[k][0]} ${C[k][1]}</button>`).join('')||'vide'):'';detail()}
@@ -2721,10 +2749,11 @@ function netGuestReq(d){
  if(NET.done.has(d.id)){netSend({k:'ans',id:d.id,v:NET.done.get(d.id)});return}
  if(NET.act&&NET.act.id===d.id)return;
  NET.act={id:d.id};
+ for(const s of ['#fx','#arena']){const e=$(s);if(e){e.className='';e.innerHTML=''}}try{document.body.classList.remove('ar')}catch(e){}
  const menu=!!d.menu;
  if(menu){NET.v.hand=(d.hand||[]).filter(k=>C[k]);NET.v.alive=true;G.cur=NET.v;netHand()}else G.cur=null;
- panel(san(d.t),d.o.map(san),menu).then(v=>{if(!NET.act||NET.act.id!==d.id)return;NET.act=null;NET.done.set(d.id,v);netSend({k:'ans',id:d.id,v});G.cur=null;netHand()})}
-function netGuestCancel(d){if(NET.act&&NET.act.id===d.id){NET.act=null;const a=$('#act');a.className='';a.innerHTML='';G.pend=null;G.cur=null;netHand()}}
+ panel(san(d.t),d.o.map(san),menu).then(v=>{if(!NET.act||NET.act.id!==d.id)return;NET.act=null;setTimeout(netReapply,50);NET.done.set(d.id,v);netSend({k:'ans',id:d.id,v});G.cur=null;netHand()})}
+function netGuestCancel(d){if(NET.act&&NET.act.id===d.id){NET.act=null;setTimeout(netReapply,50);const a=$('#act');a.className='';a.innerHTML='';G.pend=null;G.cur=null;netHand()}}
 async function netLocal(id,me,d){
  const prev=G;G={camps:[],pl:[],fast:false,q:[],humans:1,w:null,mode:S.mode,kmode:(d&&d.kmode)||'teams',diff:(d&&d.diff)||'normal',merged:false,round:1,sel:null,pend:null,cur:null};
  try{
@@ -2742,12 +2771,12 @@ async function netGuestPlay(d){
  if(typeof d.id!=='string'||!d.me||typeof d.g!=='string')return;
  if(NET.done.has(d.id)){netSend({k:'ans',id:d.id,v:NET.done.get(d.id)});return}
  if(NET.busy||!NET.begun)return;
- NET.busy=true;let v;const fiv=setInterval(()=>netFrame(d.me&&d.me.name),500);
+ NET.busy=true;let v;const fiv=setInterval(()=>netFrame(d.me&&d.me.name),380);
  try{const m=d.me,me={name:NETN(m.name)||'Moi',col:/^#[0-9a-f]{3,8}$/i.test(m.col)?m.col:'#2bb3a3',sk:m.sk,skill:+m.skill||.5,sick:m.sick,streak:m.streak|0,fit:!!m.fit,boost:!!m.boost,camp:m.camp|0,tribe:m.tribe|0,wins:m.wins|0,hand:[],st:{},alive:true,bot:false};
   const L=looksFor(S.mode);LOOK[me.name]=L[(m.lk|0)%L.length];
   if(!EPR[d.g]&&!['fire','poteau','corde'].includes(d.g))throw new Error('?');
   v=await netLocal(d.g,me,d)}catch(e){console.warn('play',e);v=50}
- NET.busy=false;clearInterval(fiv);netSend({k:'fr',end:1});$('#spec')&&($('#spec').innerHTML='');for(const k in NETFR)delete NETFR[k];v=Number.isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):50;
+ NET.busy=false;clearInterval(fiv);netSend({k:'fr',end:1});v=Number.isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):50;
  NET.done.set(d.id,v);netSend({k:'ans',id:d.id,v});netReapply()}
 
 /* ----- interface : salon ----- */
