@@ -1467,15 +1467,20 @@ async function ambassadors0(pre){
  const matesOf=a=>teams.find(x=>x.a.includes(a)).a.filter(p=>p!==a&&p.alive);
  const weakest=m=>m.slice().sort((x,y)=>((x.skill??.5)-(x.sick!=null?.3:0))-((y.skill??.5)-(y.sick!=null?.3:0)))[0];
  const ADUR=FAST?1500:300000;
- const evs=amb.filter(a=>(a.bot||a.remote||G.fast)&&matesOf(a).length&&Math.random()<.3).map(a=>({a,v:weakest(matesOf(a)),t:(.1+Math.random()*.65)*ADUR})).sort((x,y)=>x.t-y.t);
+ const evs=amb.filter(a=>(a.bot||G.fast)&&matesOf(a).length&&Math.random()<.3).map(a=>({a,v:weakest(matesOf(a)),t:(.1+Math.random()*.65)*ADUR})).sort((x,y)=>x.t-y.t);
  const hums=amb.filter(a=>!a.bot&&!a.remote&&!G.fast&&matesOf(a).length);
+ const rems=amb.filter(a=>NET.on&&a.remote&&!a.lost&&!G.fast&&matesOf(a).length);
  let win=null;
- if(hums.length){const DUR=ADUR;
-  win=await new Promise(res=>{let done=false;const t0=performance.now(),out=new Set();let iv=0;
-   const fin=w=>{if(done)return;done=true;clearInterval(iv);$('#arena').onclick=null;res(w)};
+ if(hums.length||rems.length){const DUR=ADUR;
+  win=await new Promise(res=>{let done=false;const t0=performance.now(),out=new Set(),pend=[];let iv=0;
+   const fin=w=>{if(done)return;done=true;clearInterval(iv);pend.forEach(x=>x.cancel());$('#arena').onclick=null;res(w)};
    arena(`<div class="fxt">🤝 Les ambassadeurs décident !</div><p>Tout le monde en même temps : <b>le premier qui clique sur un membre de sa tribu l\'élimine</b> et arrête l\'épreuve. Prenez le temps de réfléchir : si personne n\'ose avant la fin du temps (5 min), c\'est le tirage au sort.</p><div class="meter"><i id="amb" style="width:100%"></i></div><div class="tm" id="amt"></div>${hums.map((a,i)=>`<div class="amrow"><b style="color:${TEAMS[teams.find(x=>x.a.includes(a)).t].col}">${esc(a.name)}</b><div class="opts">${matesOf(a).map((p,j)=>`<button data-h="${i}" data-m="${j}">☠️ ${esc(p.name)}</button>`).join('')}<button data-h="${i}" data-m="-1">🙅 Personne</button></div></div>`).join('')}`);
+   rems.forEach(a=>{const ms=matesOf(a),o=[...ms.map(p=>'☠️ '+esc(p.name)),'🙅 Personne'];
+    const pr=netCall(a,{k:'req',t:`🤝 <b>${esc(a.name)}</b>, tu es ambassadeur !<br>Le premier ambassadeur qui désigne un membre de sa tribu l'élimine et arrête l'épreuve. Si personne n'ose (5 min), c'est le tirage au sort.`,o,menu:false},'Ambassadeur '+a.name,netValid(o,false,a),()=>ms.length,300000);
+    pend.push(pr);
+    pr.then(v=>{if(done||v===undefined)return;if(v<ms.length)fin({a,v:ms[v]});else{out.add(a);if(out.size===hums.length+rems.length)fin(evs[0]||null)}})});
    $('#arena').onclick=e=>{const bt=e.target.closest('button[data-h]');if(!bt||done)return;const a=hums[+bt.dataset.h],m=+bt.dataset.m;
-    if(m<0){out.add(a);bt.closest('.amrow').querySelectorAll('button').forEach(x=>x.disabled=true);if(out.size===hums.length)fin(evs[0]||null)}
+    if(m<0){out.add(a);bt.closest('.amrow').querySelectorAll('button').forEach(x=>x.disabled=true);if(out.size===hums.length+rems.length)fin(evs[0]||null)}
     else fin({a,v:matesOf(a)[m]})};
    iv=setInterval(()=>{const el=performance.now()-t0,bar=$('#amb'),tx=$('#amt');if(bar)bar.style.width=Math.max(0,100-el/DUR*100)+'%';if(tx){const r=Math.ceil(Math.max(0,DUR-el)/1000);tx.textContent=Math.floor(r/60)+':'+String(r%60).padStart(2,'0')};
     if(evs.length&&evs[0].t<=el)fin(evs[0]);else if(el>=DUR)fin(null)},100)});
@@ -2505,10 +2510,14 @@ function netRecv(m){if(!m||m.isMe||m.sameTab)return;const d=m.data;if(!d||typeof
 function netHandle(d,m){
  if(NET.role==='host'){
   if(d.k==='ans'){const r=NET.reqs.get(d.id);if(!r||r.done||r.p.peer!==m.peer)return;const v=r.valid(d.v);if(v!==undefined)r.finish(v)}
+  else if(d.k==='fr'){const pl=G&&G.pl&&G.pl.find(p=>p.peer===m.peer);if(!pl)return;
+   if(d.end){netSpec(pl.name,'',true);netSend({k:'fr',n:pl.name,end:1,from:m.peer});return}
+   if(typeof d.img!=='string'||d.img.length>3200||!/^[A-Za-z0-9+/=]+$/.test(d.img))return;
+   netSpec(pl.name,d.img);netSend({k:'fr',n:pl.name,img:d.img,from:m.peer})}
   return}
  if(m.peer!==NET.host)return;
  if(d.to&&d.to!==NET.myPeer)return;
- if(d.k==='u')netGuestU(d);else if(d.k==='req')netGuestReq(d);else if(d.k==='cancel')netGuestCancel(d);else if(d.k==='play')netGuestPlay(d)}
+ if(d.k==='u')netGuestU(d);else if(d.k==='req')netGuestReq(d);else if(d.k==='cancel')netGuestCancel(d);else if(d.k==='play')netGuestPlay(d);else if(d.k==='fr'&&d.from!==NET.myPeer&&typeof d.n==='string'){if(d.end)netSpec(d.n,'',true);else if(!NET.busy&&typeof d.img==='string'&&d.img.length<3300&&/^[A-Za-z0-9+/=]+$/.test(d.img))netSpec(d.n,d.img)}}
 
 /* ----- connexion au salon ----- */
 /* ----- hors claude.ai : mise en relation par PeerJS (connexion directe entre navigateurs, l'hôte fait le relais) ----- */
@@ -2568,6 +2577,23 @@ function netGuests(){if(!NET.on||NET.role!=='host'||!NET.room)return[];
  NET.ord.forEach(id=>{const x=ps.find(q=>q.peer===id&&!q.isMe&&q.presence&&q.presence.role==='guest');if(!x)return;
   const raw=NETN(x.presence.n)||'Joueur';let n=raw,k=2;while(used.includes(n.toLowerCase()))n=raw.slice(0,10)+k++;used.push(n.toLowerCase());out.push({peer:id,raw,n})});
  return out.slice(0,11)}
+
+/* ----- spectateur : on voit les autres jouer ----- */
+const NETFR={};
+function netSpec(name,img,end){
+ let box=$('#spec');if(!box){box=document.createElement('div');box.id='spec';box.style.cssText='position:fixed;right:8px;bottom:8px;z-index:100000;display:flex;flex-direction:column;gap:6px;pointer-events:none;align-items:flex-end';document.body.appendChild(box)}
+ const key=String(name).slice(0,24);let e=NETFR[key];
+ if(end){if(e){e.el.remove();delete NETFR[key]}return}
+ if(!e){const el=document.createElement('div');el.style.cssText='background:#0b2229ee;border:2px solid #e6c88a;border-radius:10px;padding:4px;color:#f3efe0;font:700 .72rem sans-serif;text-align:center';el.innerHTML='<div class="sn"></div><img style="display:block;width:160px;border-radius:6px;margin-top:2px">';box.appendChild(el);e=NETFR[key]={el}}
+ e.el.firstChild.textContent='👀 '+key;e.el.lastChild.src='data:image/jpeg;base64,'+img;e.t=Date.now();
+ clearTimeout(e.to);e.to=setTimeout(()=>{if(NETFR[key]===e){e.el.remove();delete NETFR[key]}},3500)}
+function netFrame(name){
+ if(NET.q.length>4)return;
+ const cs=[...document.querySelectorAll('#arena canvas,#fx canvas')].filter(c=>c.width>50&&c.height>30&&c.offsetParent);if(!cs.length)return;
+ const c=cs.sort((a,b)=>b.width*b.height-a.width*a.height)[0];
+ try{const w=144,h=Math.max(20,Math.round(w*c.height/c.width)),o=NET.fc||(NET.fc=document.createElement('canvas'));o.width=w;o.height=h;o.getContext('2d').drawImage(c,0,0,w,h);
+  let q=.45,s=o.toDataURL('image/jpeg',q);while(s.length>3000&&q>.1){q-=.07;s=o.toDataURL('image/jpeg',q)}
+  if(s.length>3100)return;netSend({k:'fr',n:name,img:s.slice(23)})}catch(e){}}
 function netPeers(){if(!NET.room)return;const ps=NET.room.peers();
  ps.forEach(p=>{if(p.presence&&p.presence.role==='guest'&&!p.isMe&&!NET.ord.includes(p.peer))NET.ord.push(p.peer)});
  const me=ps.find(p=>p.isMe&&p.sameTab);if(me)NET.myPeer=me.peer;
@@ -2611,12 +2637,12 @@ const netValid=(o,menu,p)=>v=>{
  if(menu){if(v&&typeof v==='object'){if(Number.isInteger(v.i)&&v.i>=0&&v.i<o.length)return{i:v.i};
    if(['play','show','give','swap'].includes(v.op)&&typeof v.k==='string'&&p.hand.includes(v.k))return{op:v.op,k:v.k}}return undefined}
  return(Number.isInteger(v)&&v>=0&&v<o.length)?v:undefined};
-function netCall(p,msg,label,valid,def,tmo){return new Promise(res=>{
+function netCall(p,msg,label,valid,def,tmo){let R;const pr=new Promise(res=>{
  const id='r'+(++NET.cid),r={id,p,label,valid,def,tmo,t0:Date.now(),last:Date.now(),done:false};
  r.msg={...msg,id,to:p.peer};
  r.send=()=>netSend({...r.msg,to:r.p.peer});
  r.finish=(v,auto)=>{if(r.done)return;r.done=true;NET.reqs.delete(id);netBanner();netSend({k:auto?'cancel':'ok',id,to:r.p.peer});res(v)};
- NET.reqs.set(id,r);r.send();netBanner()})}
+ R=r;NET.reqs.set(id,r);r.send();netBanner()});pr.cancel=()=>{if(R)R.finish(undefined,true)};return pr}
 function remoteAsk(t,o,p,menu){
  if(p.lost)return Promise.resolve(netAuto(o,menu));
  return netCall(p,{k:'req',t,o,menu:!!menu,hand:menu?p.hand.slice():undefined},'En attente de '+p.name,netValid(o,menu,p),()=>netAuto(o,menu))}
@@ -2716,12 +2742,12 @@ async function netGuestPlay(d){
  if(typeof d.id!=='string'||!d.me||typeof d.g!=='string')return;
  if(NET.done.has(d.id)){netSend({k:'ans',id:d.id,v:NET.done.get(d.id)});return}
  if(NET.busy||!NET.begun)return;
- NET.busy=true;let v;
+ NET.busy=true;let v;const fiv=setInterval(()=>netFrame(d.me&&d.me.name),500);
  try{const m=d.me,me={name:NETN(m.name)||'Moi',col:/^#[0-9a-f]{3,8}$/i.test(m.col)?m.col:'#2bb3a3',sk:m.sk,skill:+m.skill||.5,sick:m.sick,streak:m.streak|0,fit:!!m.fit,boost:!!m.boost,camp:m.camp|0,tribe:m.tribe|0,wins:m.wins|0,hand:[],st:{},alive:true,bot:false};
   const L=looksFor(S.mode);LOOK[me.name]=L[(m.lk|0)%L.length];
   if(!EPR[d.g]&&!['fire','poteau','corde'].includes(d.g))throw new Error('?');
   v=await netLocal(d.g,me,d)}catch(e){console.warn('play',e);v=50}
- NET.busy=false;v=Number.isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):50;
+ NET.busy=false;clearInterval(fiv);netSend({k:'fr',end:1});$('#spec')&&($('#spec').innerHTML='');for(const k in NETFR)delete NETFR[k];v=Number.isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):50;
  NET.done.set(d.id,v);netSend({k:'ans',id:d.id,v});netReapply()}
 
 /* ----- interface : salon ----- */
