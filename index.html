@@ -219,14 +219,14 @@ const PALETTE=['#e63946','#f4a261','#2a9d8f','#457b9d','#9b5de5','#f15bb5','#00b
 const TEAMS=[{name:'Tribu Jaune',col:'#f4c430'},{name:'Tribu Rouge',col:'#e0453a'},{name:'Tribu Bleue',col:'#2a7fe0'},{name:'Tribu Verte',col:'#2fae5a'}];
 
 /* ---------- cartes ---------- */
-const C={eau:['💧','Bouteille d\'eau'],croupie:['🦠','Eau croupie'],sand:['🥪','Sandwich'],sard:['🐟','Sardines'],pourri:['🤢','Poisson pourri'],panier:['🧺','Panier garni'],anti:['💉','Anti-venin'],vaudou:['🪆','Poupée vaudou'],rev:['🔫','Revolver'],cart:['🔸','Cartouche'],gourde:['🥤','Gourde'],canne:['🎣','Canne à pêche'],hache:['🪓','Hache'],cristal:['🔮','Boule de cristal'],reveil:['⏰','Réveil'],somn:['💊','Somnifères'],inutile:['🩲','Objet inutile'],bateau:['🛟','Bateau gonflable troué'],scotch:['🩹','Scotch'],idole:['🗿','Idole d\'immunité'],manioc:['🥔','Manioc'],coco:['🥥','Noix de coco'],banane:['🍌','Banane'],sucre:['🎋','Canne à sucre']};
-const DESC={eau:'1 ration d\'eau. À ajouter au stock commun, ou à garder pour te sauver lors d\'une pénurie d\'eau.',croupie:'1 ration d\'eau, mais tu tombes malade.',sand:'1 ration de nourriture : stock commun, ou pour te sauver lors d\'une pénurie.',sard:'3 rations de nourriture.',pourri:'1 ration de nourriture, mais tu tombes malade.',panier:'En cas de pénurie, personne ne meurt mais le compteur tombe à zéro. Joué automatiquement quand tu es désigné.',anti:'Utilisé automatiquement si une boule noire sort : tu ne tombes pas malade.',vaudou:'Ressuscite un naufragé de ton choix.',rev:'Permanent. Avec une cartouche, abat un naufragé et récupère ses cartes.',cart:'À associer au revolver. Perdue après usage.',gourde:'Permanent : tu récoltes 2 fois plus d\'eau.',canne:'Permanent : +1 poisson quand ta pêche réussit.',hache:'Permanent : +1 bois quand ta récolte réussit.',cristal:'Permanent : tu votes toujours en dernier.',reveil:'Choisis qui commencera le prochain tour.',somn:'Vole une carte au hasard à 3 naufragés.',inutile:'Ne sert à rien… mais peut servir à rouler un autre joueur dans un échange.',bateau:'Seul, il ne vaut rien. Avec le Scotch, il compte comme 1 place de radeau.',scotch:'Seul, il ne vaut rien. Avec le Bateau gonflable troué, il compte comme 1 place de radeau.',idole:'Koh-Lanta : si tu es désigné par un vote, tu es immunisé.',manioc:'1 ration de nourriture.',coco:'1 ration de nourriture ET 1 ration d\'eau en même temps.',banane:'1 ration de nourriture.',sucre:'1 ration de nourriture. Mangée, elle te guérit tout de suite, ou te donne un coup de fouet (+12 % au prochain jeu) si tu es déjà en forme.'};
+const C={eau:['💧','Bouteille d\'eau'],croupie:['🦠','Eau croupie'],sand:['🥪','Sandwich'],sard:['🐟','Sardines'],pourri:['🤢','Poisson pourri'],panier:['🧺','Panier garni'],anti:['💉','Anti-venin'],vaudou:['🪆','Poupée vaudou'],rev:['🔫','Revolver'],cart:['🔸','Cartouche'],gourde:['🥤','Gourde'],canne:['🎣','Canne à pêche'],hache:['🪓','Hache'],cristal:['🔮','Boule de cristal'],reveil:['⏰','Réveil'],somn:['💊','Somnifères'],inutile:['🩲','Objet inutile'],bateau:['🛟','Bateau gonflable troué'],scotch:['🩹','Scotch'],idole:['🗿','Idole d\'immunité'],manioc:['🥔','Manioc'],coco:['🥥','Noix de coco'],banane:['🍌','Banane'],sucre:['🎋','Canne à sucre'],bois:['🪵','Bûches sèches']};
+const DESC={eau:'1 ration d\'eau. À ajouter au stock commun, ou à garder pour te sauver lors d\'une pénurie d\'eau.',croupie:'1 ration d\'eau, mais tu tombes malade.',sand:'1 ration de nourriture : stock commun, ou pour te sauver lors d\'une pénurie.',sard:'3 rations de nourriture.',pourri:'1 ration de nourriture, mais tu tombes malade.',panier:'En cas de pénurie, personne ne meurt mais le compteur tombe à zéro. Joué automatiquement quand tu es désigné.',anti:'Utilisé automatiquement si une boule noire sort : tu ne tombes pas malade.',vaudou:'Ressuscite un naufragé de ton choix.',rev:'Permanent. Avec une cartouche, abat un naufragé et récupère ses cartes.',cart:'À associer au revolver. Perdue après usage.',gourde:'Permanent : tu récoltes 2 fois plus d\'eau.',canne:'Permanent : +1 poisson quand ta pêche réussit.',hache:'Permanent : +1 bois quand ta récolte réussit.',cristal:'Permanent : tu votes toujours en dernier.',reveil:'Choisis qui commencera le prochain tour.',somn:'Vole une carte au hasard à 3 naufragés.',inutile:'Ne sert à rien… mais peut servir à rouler un autre joueur dans un échange.',bateau:'Seul, il ne vaut rien. Avec le Scotch, il compte comme 1 place de radeau.',scotch:'Seul, il ne vaut rien. Avec le Bateau gonflable troué, il compte comme 1 place de radeau.',idole:'Koh-Lanta : si tu es désigné par un vote, tu es immunisé.',manioc:'1 ration de nourriture.',coco:'1 ration de nourriture ET 1 ration d\'eau en même temps.',banane:'1 ration de nourriture.',bois:'Koh-Lanta : +3 bois pour le feu de ton camp.',sucre:'1 ration de nourriture. Mangée, elle te guérit tout de suite, ou te donne un coup de fouet (+12 % au prochain jeu) si tu es déjà en forme.'};
 const DECK={eau:8,croupie:3,sand:8,sard:4,pourri:3,panier:2,anti:3,vaudou:2,rev:2,cart:4,gourde:1,canne:1,hache:1,cristal:1,reveil:2,somn:2,inutile:6,bateau:1,scotch:1};
 const PERM=['gourde','canne','hache','cristal'],WK=['eau','croupie','coco'],FK=['sand','sard','pourri','manioc','coco','banane','sucre'];
 const START={3:[5,6],4:[7,8],5:[8,10],6:[10,12],7:[12,14],8:[13,16],9:[15,18],10:[16,20],11:[18,22],12:[20,24]};
 const DIF={facile:{t:'Facile',w:8,b:1,c:1,m:1.5},normal:{t:'Normal',w:6,b:1,c:0,m:1},dur:{t:'Dur',w:5,b:2,c:-1,m:.75}};
 const MODES={classic:'Galèrapagos',koh:'Koh-Lanta'};
-const WI={0:'☀️',1:'🌦️',2:'🌧️',3:'⛈️',H:'🌀'},WN={0:'Grand soleil',1:'Ciel voilé',2:'Pluie',3:'Orage',H:'OURAGAN'};
+const WI={0:'☀️',1:'🌦️',2:'🌧️',3:'⛈️',4:'🌈',H:'🌀'},WN={0:'Grand soleil',1:'Ciel voilé',2:'Pluie',3:'Orage',4:'Nuit douce',H:'OURAGAN'};
 const DAYK=['confort','immunite','vote'],DAYL=['Épreuve de confort','Épreuve d\'immunité','Conseil d\'élimination'];
 const cn=k=>C[k][0]+' '+C[k][1];
 const alive=()=>G.pl.filter(p=>p.alive);
@@ -329,7 +329,7 @@ async function ballsFx(p,k,bl,title){if(G.fast||G.mute)return;const f=$('#fx');S
  for(let i=0;i<k;i++){await sleep(520);bs[i].classList.add('show',i===bi?'bk':'wh')}
  f.querySelector('.fxr').textContent=bl?'⚫ Boule noire !':'⚪ Que des boules blanches !';await sleep(1100);f.className='';f.innerHTML='';f.onclick=null}
 async function weatherFx(){const w=G.w,koh=G.mode==='koh';
- await fx(`<div class="fxt">${koh?'Jour':'Tour'} ${G.round}${koh?' — '+DAYL[(G.round-1)%3]:''}</div><div class="wcard"><div class="flip"><div class="cb">🌴</div><div class="ft">${WI[w]}<small>${WN[w]}${w!=='H'&&w!==0?' · eau +'+w:''}</small></div></div></div>`,2600)}
+ await fx(`<div class="fxt">${koh?'Jour':'Tour'} ${G.round}${koh?' — '+DAYL[(G.round-1)%3]:''}</div><div class="wcard"><div class="flip"><div class="cb">🌴</div><div class="ft">${WI[w]}<small>${WN[w]}${w!=='H'&&w!==0&&w!==4?' · eau +'+w:''}${w===4?' · le feu ne consomme rien cette nuit':''}</small></div></div></div>`,2600)}
 async function cardFx(p,k){const see=viewer===p;
  await fx(`<div class="fxt">${esc(p.name)} fouille l'épave…</div><div class="wcard"><div class="flip"><div class="cb">🧳</div><div class="ft">${see?C[k][0]:'🃏'}<small>${see?C[k][1]:'carte cachée'}</small></div></div></div>`,2000)}
 const evt=(h,ms)=>G.q.push([h,ms||1300]);
@@ -363,7 +363,7 @@ function kohSlides(pl,teams){const crew=pl.map(p=>human(p.col,'cheer',p.name)).j
  return [
  {sc:'sc-koh',html:`<div class="isl">🏝️</div><div class="crew">${crew}</div>`,text:`Bienvenue à Koh-Lanta ! ${pl.length} aventuriers, une île sauvage, des épreuves et des conseils d'élimination. Un seul d'entre vous remportera l'aventure.`},
  {sc:'sc-koh',html:`<div class="isl">🔥</div>`,text:teams?`${G.nt||2} tribus s'affrontent. ${Array.from({length:G.nt||2},(_,t)=>`${TEAMS[t].name} : ${names(t)}.`).join(' ')} Chaque tribu a son camp et ses réserves. Quand il ne restera plus que quelques aventuriers, les tribus fusionneront.`:'Ici, c\'est chacun pour soi : un seul camp, des alliances qui se font et se défont, et un conseil où tout le monde vote.'},
- {sc:'sc-koh',html:`<div class="isl">🪵</div>`,text:'Chaque jour : pêche, eau, bois pour le feu ou fouille de l\'île. En cas de pénurie, personne ne meurt : les désignés perdent en forme. Au départ, il n\'y a pas de feu : il faut l\'allumer, puis chercher du bois pour l\'entretenir. S\'il s\'éteint (plus de bois, pluie), il faut le rallumer ; sans feu, manger cru rend malade (80 % de risque). Jour 1 : épreuve de confort. Jour 2 : épreuve d\'immunité. Jour 3 : conseil d\'élimination. Trois maladies de suite et le médecin te déclare inapte. À trois, épreuve des poteaux ; à deux, le jury des éliminés vote pour le gagnant.'}]}
+ {sc:'sc-koh',html:`<div class="isl">🪵</div>`,text:'Chaque jour : pêche, eau, bois pour le feu ou fouille de l\'île. En cas de pénurie, personne ne meurt : les désignés perdent en forme. Au départ, il n\'y a pas de feu : il faut l\'allumer, puis chercher du bois pour l\'entretenir. S\'il s\'éteint (plus de bois, pluie), il faut le rallumer ; sans feu, manger cru rend malade (40 % de risque). Avant le conseil, discute avec les autres et noue des alliances secrètes (on peut en avoir plusieurs… et trahir). Jour 1 : épreuve de confort. Jour 2 : épreuve d\'immunité. Jour 3 : conseil d\'élimination. Trois maladies de suite et le médecin te déclare inapte. À trois, épreuve des poteaux ; à deux, le jury des éliminés vote pour le gagnant.'}]}
 
 /* ---------- interface de jeu ---------- */
 function panel(t,o,menu){return new Promise(res=>{const a=$('#act');a.className='on';a.innerHTML=`<p>${t}</p><div class="opts">`+o.map((x,i)=>`<button data-i="${i}">${x}</button>`).join('')+'</div>';
@@ -384,7 +384,7 @@ function render(){
   h+=`<div class="camp" style="--cc:${c.col}">${G.camps.length>1?`<div class="ct">${esc(c.name)} · ${m} en vie</div>`:''}`
    +cd('w','💧 Eau',c.water,'',36)+cd('f','🐟 Nourriture',c.food,'food',36)
    +(koh?cd('b',`🔥 Feu ${c.fire?'allumé':'ÉTEINT'} · bois (−${fireCost()}/nuit)`,c.wood,'wood',12):cd('r',`🛶 Radeau · bois ${'●'.repeat(c.wood)}${'○'.repeat(6-c.wood)}`,c.raft,'wood',12))
-   +`<div class="card">Survivants<b>${m}</b><small>${koh?'Sans feu : 80 % de risque d\'être malade en mangeant':`Embarquer : ${m} places, ${m} eau, ${m} nourriture`}</small></div></div>`});
+   +`<div class="card">Survivants<b>${m}</b><small>${koh?'Sans feu : 40 % de risque d\'être malade en mangeant':`Embarquer : ${m} places, ${m} eau, ${m} nourriture`}</small></div></div>`});
  $('#bar').innerHTML=h;
  if(G.pv)document.querySelectorAll('#bar [data-k]').forEach(e=>{const o=G.pv[e.dataset.k];if(o!==undefined&&o!=e.dataset.v)e.classList.add('fl')});
  G.pv=pv;
@@ -392,7 +392,7 @@ function render(){
   $('#pls').innerHTML=grp?Array.from({length:G.nt||2},(_,t)=>(G.merged?'':`<div class="tribeh" style="--cc:${TEAMS[t].col}">${esc(TEAMS[t].name)}</div>`)+G.pl.map((p,i)=>[p,i]).filter(x=>x[0].tribe===t).map(x=>cardP(x[0],x[1])).join('')).join(''):G.pl.map(cardP).join('')}
  $('#hand').innerHTML=viewer&&viewer.alive?'<b>Ta main :</b> '+(viewer.hand.map(k=>`<button class="c" data-k="${k}">${C[k][0]} ${C[k][1]}</button>`).join('')||'vide'):'';
  detail()}
-function canPlay(p,k){return[...WK,...FK,'vaudou','reveil','somn'].includes(k)||(k==='rev'&&p.hand.includes('cart'))||(k==='bateau'&&p.hand.includes('scotch'))||(k==='scotch'&&p.hand.includes('bateau'))}
+function canPlay(p,k){return[...WK,...FK,'vaudou','reveil','somn','bois'].includes(k)||(k==='rev'&&p.hand.includes('cart'))||(k==='bateau'&&p.hand.includes('scotch'))||(k==='scotch'&&p.hand.includes('bateau'))}
 function detail(){const k=G.sel,d=$('#detail');if(!k||!viewer||!viewer.hand.includes(k)){d.innerHTML='';return}
  const can=G.pend&&G.cur===viewer;
  d.innerHTML=`<b>${cn(k)}</b><p>${DESC[k]}</p>`+(can?(canPlay(viewer,k)?'<button data-o="play">▶ Jouer</button> ':'')+'<button data-o="show">👁 Montrer à tous</button> <button data-o="give">🎁 Donner</button> <button data-o="swap">🔁 Échanger</button>':'<i>Pendant ton tour, tu pourras jouer, montrer, donner ou échanger cette carte.</i>')}
@@ -402,7 +402,7 @@ $('#mus').onclick=()=>{S.music=!S.music;music(S.music)};
 
 /* ---------- règles : sac, maladie, mort ---------- */
 const pOK=k=>{const w=G.white,t=G.white+G.black;let r=1;for(let i=0;i<k;i++)r*=Math.max(0,w-i)/(t-i);return r};
-const labels=()=>[1,2,3,4,5,6].map(k=>`${k} boule${k>1?'s':''} (${Math.round(pOK(k)*100)} % de réussite)`);
+const labels=()=>[1,2,3,4,5,6].map(k=>`${k} boule${k>1?'s':''} (${Math.round(pOK(k)*100)} % de réussite)${k===6&&G.mode==='koh'?' · si ça réussit : 40 % de retrouver la forme':''}`);
 const black=k=>shuffle(G.bag.slice()).slice(0,k).includes('B');
 function die(p,by,why){p.alive=false;p.cause=why||'';const pool=p.hand.filter(k=>!PERM.includes(k));p.hand=[];log(`⚰️ <b>${esc(p.name)}</b> quitte la partie${why?' ('+why+')':''}.`);evt(`⚰️ ${esc(p.name)} quitte la partie${why?'<br><small>'+why+'</small>':''}`,1500);
  if(by){by.hand.push(...pool);return}
@@ -437,9 +437,9 @@ async function idol(v){const i=v.hand.indexOf('idole');if(i<0)return false;
 async function vote(reason,cands,voters){
  if(cands.length===1)return cands[0];
  const vs=(voters||alive()).filter(p=>p.alive&&p.sick==null).sort((a,b)=>a.hand.includes('cristal')-b.hand.includes('cristal'));
- const tally=new Map(cands.map(c=>[c,0]));
+ const tally=new Map(cands.map(c=>[c,0])),foc=pick(cands);
  for(const v of vs){const t=cands.filter(c=>c!==v);if(!t.length)continue;
-  const c=v.bot?t[Math.random()*t.length|0]:t[await ask(`🗳️ ${reason}<br>Tu votes contre :`,t.map(x=>esc(x.name)),v)];
+  const c=v.bot?((foc&&foc!==v&&Math.random()<.6)?foc:t[Math.random()*t.length|0]):t[await ask(`🗳️ ${reason}<br>Tu votes contre :`,t.map(x=>esc(x.name)),v)];
   tally.set(c,tally.get(c)+1)}
  const mx=Math.max(...tally.values());let top=[...tally].filter(e=>e[1]===mx).map(e=>e[0]);
  log('🗳️ Votes : '+([...tally].filter(e=>e[1]).map(e=>`${esc(e[0].name)} ${e[1]}`).join(', ')||'aucun'));
@@ -461,10 +461,10 @@ async function consume(ci,res){
   const n2=members(ci).length;
   if(c[res]>=n2){c[res]-=n2;render();await drain();return}}
  log(`⚠️ Pénurie de ${nm}${lab} !`);evt(`⚠️ Pénurie de ${nm}${lab} !`,1400);
- if(z){for(const p of members(ci)){const k=p.hand.find(k=>keys.includes(k));if(k){useRes(p,k);log(`${esc(p.name)} survit grâce à sa carte.`)}else starve(p,res)}c[res]=0;render();await drain();return}
+ if(z){for(const p of members(ci)){const k=p.hand.find(k=>keys.includes(k));if(k){useRes(p,k);log(`${esc(p.name)} survit grâce à sa carte.`)}else if(G.mode==='koh'&&G.hit&&G.hit.has(p))log(`${esc(p.name)} a déjà payé cette nuit : épargné(e).`);else{starve(p,res);if(G.hit)G.hit.add(p)}}c[res]=0;render();await drain();return}
  let short=members(ci).length-c[res];const saved=new Set();
  while(short>0&&members(ci).length){
-  const cands=members(ci).filter(p=>!saved.has(p));if(!cands.length)break;
+  const cands=members(ci).filter(p=>!saved.has(p)&&!(G.mode==='koh'&&G.hit&&G.hit.has(p)));if(!cands.length)break;
   const v=await vote(`Pénurie de ${nm}${lab}`,cands,members(ci));log(`${esc(v.name)} est désigné.`);
   if(await idol(v)){saved.add(v);short--;render();continue}
   const ks=v.hand.filter(k=>keys.includes(k)),gun=v.hand.includes('rev')&&v.hand.includes('cart'),pan=v.hand.includes('panier');
@@ -475,7 +475,7 @@ async function consume(ci,res){
   if(act==='panier'){v.hand.splice(v.hand.indexOf('panier'),1);log('🧺 Panier garni : compteur remis à zéro, aucun mort.');c[res]=0;render();await drain();return}
   if(act==='card'){useRes(v,ks[0]);saved.add(v);log(`${esc(v.name)} survit grâce à sa carte.`)}
   else if(act==='shoot'){const ts=members(ci).filter(p=>p!==v);const t=v.bot?ts[Math.random()*ts.length|0]:ts[await ask('Qui abattre ?',ts.map(x=>esc(x.name)),v)];await shoot(v,t)}
-  else starve(v,res);
+  else{starve(v,res);if(G.hit)G.hit.add(v)}
   short--;render();await drain()}
  c[res]=0;render();await drain()}
 
@@ -483,7 +483,8 @@ async function consume(ci,res){
 const pickOther=(p,t)=>{const o=alive().filter(x=>x!==p);return ask(t,o.map(x=>esc(x.name)),p).then(i=>o[i])};
 function combine(p){p.hand.splice(p.hand.indexOf('bateau'),1);p.hand.splice(p.hand.indexOf('scotch'),1);const c=camp(p);if(c.raft<12)c.raft++;log(`🛟🩹 ${esc(p.name)} colle le bateau avec le scotch : une place de radeau en plus !`);evt('🛟🩹 Bateau + scotch = une place de radeau !',1500)}
 async function playCard(p,k){const others=alive().filter(x=>x!==p),c=camp(p);
- if(k==='coco'){useRes(p,k);c.water=Math.min(36,c.water+1);c.food=Math.min(36,c.food+1);log(`🥥 ${esc(p.name)} ouvre une noix de coco : +1 eau et +1 nourriture au stock.`)}
+ if(k==='bois'){p.hand.splice(p.hand.indexOf(k),1);c.wood=Math.min(36,c.wood+3);log(`🪵 ${esc(p.name)} ajoute des bûches sèches au tas : +3 bois.`)}
+ else if(k==='coco'){useRes(p,k);c.water=Math.min(36,c.water+1);c.food=Math.min(36,c.food+1);log(`🥥 ${esc(p.name)} ouvre une noix de coco : +1 eau et +1 nourriture au stock.`)}
  else if(k==='sucre'&&(p.bot||await ask(`🎋 Canne à sucre : que veux-tu en faire ?`,['🍴 L\'ajouter au stock de nourriture','💪 La manger ('+(p.sick!=null?'te guérir':'+12 % au prochain jeu')+')'],p)===1)){eatSugar(p)}
  else if(WK.includes(k)){useRes(p,k);c.water=Math.min(36,c.water+1);log(`💧 ${esc(p.name)} ajoute de l'eau au stock.`)}
  else if(FK.includes(k)){useRes(p,k);c.food=Math.min(36,c.food+resVal(k));log(`🍴 ${esc(p.name)} ajoute de la nourriture au stock.`)}
@@ -534,8 +535,9 @@ async function act(p,i){
  p.st=p.st||{};p.st[T]=(p.st[T]||0)+g;
  log(lucky?`⚫🍀 ${esc(p.name)} (${k} boules) : boule noire, mais coup de chance, il garde son butin ! ${L.split(' ')[0]} +${g}.`:`⚪ ${esc(p.name)} (${k} boules) : réussi ! ${L.split(' ')[0]} +${g}.`);
  if(lucky){const ai=p.hand.indexOf('anti');if(ai>=0){p.hand.splice(ai,1);log(`💉 L'anti-venin évite quand même la maladie à ${esc(p.name)}.`)}else makeSick(p)}
+ if(koh&&k===6&&!bl&&Math.random()<.4){log(`🍀 Six boules sans une seule noire : ${esc(p.name)} a une chance de se refaire une santé !`);raiseForm(p)}
  await drain();render()}
-const fireCost=()=>({0:1,1:1,2:2,3:3})[G.w]||1;
+const fireCost=()=>({0:1,1:1,2:2,3:3,4:0})[G.w]??1;
 const pFire=p=>clamp((.25+(p.sk?p.sk.camp:(p.skill??.5))*.55)*(sickMult(p)<1?.85:1),.2,.85);
 function fireGame(p){return new Promise(res=>{const sm=sickMult(p);let h=8,t=0,done=false,need='left',nextC=1.8,flash=0,lastT=performance.now();
  const SY={left:'◀',right:'▶',up:'▲',down:'▼'},LB={left:'Q',right:'D',up:'Z',down:'S'};
@@ -619,11 +621,12 @@ const EPR={
  code:{icon:'🔐',name:'Le code secret',kind:'Confort',desc:'Puzzle de déduction : un code de 4 couleurs toutes différentes (parmi 6) est caché. Essaie des combinaisons : ● = bonne couleur bien placée, ○ = bonne couleur mal placée. 8 essais maximum : moins tu en utilises, plus tu marques.'},
  touches:{icon:'⌨️',name:'Touches éclair',kind:'Confort',desc:'Une lettre de l\'alphabet s\'affiche : appuie dessus sur ton clavier (ou sur l\'écran) avant la fin de la barre ! 20 lettres, de plus en plus vite. Une mauvaise touche compte comme raté.'},
  aveugle:{icon:'🙈',name:'L\'aveugle et le guide',kind:'Immunité',desc:'Épreuve en duo avec un ordinateur (grand terrain) : l\'un est aveugle, l\'autre voit tout le terrain et le guide. Si tu es aveugle, tu ne vois rien : déplace-toi (flèches, ZQSD ou boutons) en suivant les indications de ton guide. Si tu es le guide, dirige ton partenaire avec les flèches (Espace = stop). Il faut rapporter 5 drapeaux, un à droite, un à gauche, en aller-retour. Un rocher te fait perdre un instant. 85 secondes.'},
+ sousmarine:{icon:'🐠',name:'La nage sous-marine',kind:'Immunité',desc:'Épreuve sous l\'eau : nage vers le trésor englouti le plus loin possible en 50 secondes. Monte et descends (flèches, ZQSD ou boutons) pour éviter requins 🦈, méduses 🪼 et rochers 🪨, et attrape les bulles 🫧 pour ne pas manquer d\'air. Chaque choc te ralentit.'},
  plongee:{icon:'🤿',name:'La plongée en apnée',kind:'Immunité',desc:'Épreuve aquatique : plonge, ramasse les perles au fond et ramène-les à la surface avant de manquer d\'air (60 secondes). Nage avec les flèches, ZQSD ou les boutons. Évite les méduses qui te coûtent de l\'air. Plus tu transportes de perles, plus ton air fond vite. Si tu t\'évanouis, tu perds les perles que tu portais.'},
  coursepuzzle:{icon:'🏃',name:'Course et puzzle',kind:'Immunité',desc:'Épreuve mixte sport + logique, longue et exigeante : un sprint de 45 s (alterne Q et D sans jamais ralentir, et saute les 3 obstacles 🚧 à temps), puis un puzzle coulissant 3×3 à remettre en ordre en moins de 110 s. Le temps total et les obstacles ratés décident du score.'},
  sarbacane:{icon:'🪨',name:'Le lance-pierres (visée)',kind:'Immunité',desc:'Tends l\'élastique du lance-pierres avec la souris (ou le doigt) : l\'angle règle la visée et la distance la puissance. 45 secondes pour faire tomber des noix de coco 🥥 sur une longue plage : cibles petites et lointaines, certaines bougent, les dorées sont minuscules mais valent plus. Le vent dévie tes tirs !'},
  poteau:{icon:'🏝️',name:'Les poteaux (3D)',kind:'Finale',desc:'Les trois derniers aventuriers sont perchés sur un poteau. Garde le point rouge dans le cercle (souris, doigt, ZQSD ou stick) pour rester stable. Le dernier debout gagne et choisit son adversaire en finale.'}};
-const CONF=['lancer','quilles','memoire','chrono','paires','arc3d','bambou','etoile','taquin','code','touches','plongee','sarbacane'],IMM=['coursepuzzle','sarbacane','plongee','aveugle','touches','course','poutre3d','reflexes','corde','course3d','koalas','parcours','lestee','equilibre','ronde','planche','paresseux'],TEAMONLY=['ronde','planche','koalas'],SOLOONLY=['parcours','lestee','paresseux'],PHYS=['coursepuzzle','plongee','course','parcours','course3d','lestee','equilibre','koalas','ronde','poutre3d','orientation','paresseux'];
+const CONF=['sousmarine','lancer','quilles','memoire','chrono','paires','arc3d','bambou','etoile','taquin','code','touches','plongee','sarbacane'],IMM=['sousmarine','coursepuzzle','sarbacane','plongee','aveugle','touches','course','poutre3d','reflexes','corde','course3d','koalas','parcours','lestee','equilibre','ronde','planche','paresseux'],TEAMONLY=['ronde','planche','koalas'],SOLOONLY=['parcours','lestee','paresseux'],PHYS=['sousmarine','coursepuzzle','plongee','course','parcours','course3d','lestee','equilibre','koalas','ronde','poutre3d','orientation','paresseux'];
 const MG={};
 const mgIntro=(ep,p)=>arenaWait(`<div class="fxt">${ep.icon} ${ep.name}</div><p>${ep.desc}</p><div>${human(p.col,'sway',p.name)}</div><p><b>${esc(p.name)}</b>, à toi !</p>${sickMult(p)<1?`<p>🤒 ${SL(p)===2?'Très malade':'Malade'} : −${Math.round((1-sickMult(p))*100)} % sur ton score</p>`:''}`,'Prêt ? Go ▶');
 async function endMG(score,extra){arena(`<div class="fxt">Score : ${score}/100</div><p>${extra||''}</p>`);await sleep(1500);closeArena();return score}
@@ -1632,6 +1635,44 @@ async function captainDraft(nT){
  await show(`<div class="fxt">👑 Les tribus sont formées</div><div class="line">${caps.map((c,t)=>`<div class="who" style="color:${TEAMS[t].col}">${esc(TEAMS[t].name)}<br>${pl.filter(p=>p.camp===t).map(p=>human(p.col,'sway',p.name)).join('')}<br><small>${pl.filter(p=>p.camp===t).map(p=>esc(p.name)).join(', ')}</small></div>`).join('')}</div>`,'Continuer ▶')}
 
 /* ---------- Plongée en apnée (épreuve aquatique) ---------- */
+MG.sousmarine=async p=>{await mgIntro(EPR.sousmarine,p);
+ const W=400,H=300,DUR=50,D=4300,sm=sickMult(p),AR={up:'⬆',down:'⬇'};
+ arena(`<div class="fxt">🐠 Nage sous-marine — ${esc(p.name)}</div>${cvHTML(W,H)}<div class="tm" id="tm"></div><div class="opts" id="pd">${['up','down'].map(d=>`<button class="big" data-d="${d}">${AR[d]}</button>`).join('')}</div><p><small>Monte et descends (<b>↑ ↓</b>, <b>Z S</b> ou boutons) pour éviter les dangers et attraper les bulles 🫧. Chaque choc te ralentit et te coûte de l'air. Plus tu vas loin, plus tu marques.</small></p>`);
+ const cv=$('#cv'),g=cv.getContext('2d');g.setTransform(cv.width/W,0,0,cv.height/H,0,0);
+ const obs=[],bub=[];let x=420;
+ while(x<D-200){const n=1+(Math.random()<.5?1:0);for(let i=0;i<n;i++){const t=pick(['🦈','🪼','🪨','🪼','🪨']);obs.push({x:x+i*45,y:Math.random()<.5?H/2+(Math.random()-.5)*90:40+Math.random()*(H-80),t,ph:Math.random()*6})}if(Math.random()<.7)bub.push({x:x+70+Math.random()*50,y:40+Math.random()*(H-80),got:false});x+=95+Math.random()*60}
+ let py=H/2,dist=0,air=100,el=0,cd=1.5,hurt=0,slow=0,msg='',msgT=0,done=false,endT=0,vy=0;
+ const held=new Set(),btn=new Set(),mapK={arrowup:'up',z:'up',w:'up',arrowdown:'down',s:'down'};
+ const kd=e=>{const d=mapK[(e.key||'').toLowerCase()];if(d){e.preventDefault();held.add(d)}},ku=e=>{const d=mapK[(e.key||'').toLowerCase()];if(d)held.delete(d)};
+ document.addEventListener('keydown',kd);document.addEventListener('keyup',ku);
+ const pd=$('#pd');pd.onpointerdown=e=>{const b=e.target.closest('button');if(b)btn.add(b.dataset.d)};pd.onpointerup=pd.onpointerleave=pd.onpointercancel=()=>btn.clear();
+ await loop(dt=>{
+  if(cd>0)cd-=dt;else if(!done){el+=dt;
+   const hd=new Set([...held,...btn]);let dy=(hd.has('down')?1:0)-(hd.has('up')?1:0);if(PAD.ay)dy=PAD.ay;
+   vy+=(dy*150*sm-vy)*Math.min(1,dt*9);py=clamp(py+vy*dt,16,H-16);
+   slow=Math.max(0,slow-dt);hurt=Math.max(0,hurt-dt);
+   const sp=(100+Math.min(50,el*1.6))*sm*(slow>0?.35:1);dist+=sp*dt;
+   air=clamp(air-dt*(100/38),0,100);
+   obs.forEach(o=>{const ox=o.x-dist+70,oy=o.t==='🦈'?o.y+Math.sin(el*2+o.ph)*34:o.t==='🪼'?o.y+Math.sin(el*1.4+o.ph)*18:o.y;o.sx=ox;o.sy=oy;
+    if(hurt<=0&&Math.abs(ox-70)<(o.t==='🦈'?24:18)&&Math.abs(oy-py)<18){hurt=1.1;slow=1.2;air=Math.max(0,air-(o.t==='🦈'?22:14));msg=o.t==='🦈'?'🦈 Un requin !':o.t==='🪼'?'🪼 Aïe, méduse !':'🪨 Un rocher !';msgT=1}});
+   bub.forEach(b=>{b.sx=b.x-dist+70;if(!b.got&&Math.abs(b.sx-70)<18&&Math.abs(b.y-py)<18){b.got=true;air=Math.min(100,air+26);msg='🫧 Bulle d\'air !';msgT=.7}});
+   if(dist>=D||el>=DUR||air<=0){done=true;endT=1.4;if(air<=0){msg='😵 Plus d\'air !';msgT=1.5}if(dist>=D){msg='💰 Le trésor !';msgT=1.5}}}
+  else endT-=dt;
+  msgT=Math.max(0,msgT-dt);
+  const sk=g.createLinearGradient(0,0,0,H);sk.addColorStop(0,'#2a9dc9');sk.addColorStop(1,'#08283f');g.fillStyle=sk;g.fillRect(0,0,W,H);
+  g.fillStyle='#ffffff14';for(let i=0;i<5;i++){const bx=((i*95-dist*.3)%(W+60)+W+60)%(W+60)-30;g.beginPath();g.moveTo(bx,0);g.lineTo(bx+40,0);g.lineTo(bx-30,H);g.lineTo(bx-70,H);g.fill()}
+  g.fillStyle='#5b3d1e';g.fillRect(0,H-10,W,10);g.font='16px sans-serif';g.textAlign='center';for(let i=0;i<8;i++){const bx=((i*70-dist*.8)%(W+40)+W+40)%(W+40)-20;g.fillText('🌿',bx,H-12)}
+  bub.forEach(b=>{if(!b.got&&b.sx>-20&&b.sx<W+20){g.font='20px sans-serif';g.fillText('🫧',b.sx,b.y+7)}});
+  obs.forEach(o=>{if(o.sx>-40&&o.sx<W+40){g.font=(o.t==='🦈'?30:24)+'px sans-serif';g.fillText(o.t,o.sx,o.sy+9)}});
+  const tx=D-dist+70;if(tx<W+40){g.font='34px sans-serif';g.fillText('💰',tx,H-30)}
+  g.font='28px sans-serif';g.globalAlpha=hurt>0&&((hurt*10|0)%2)?.4:1;g.fillText('🏊',70,py+9);g.globalAlpha=1;
+  g.fillStyle='#0009';g.fillRect(10,H-24,160,10);g.fillStyle=air<30?'#e63946':'#2a9d8f';g.fillRect(10,H-24,160*air/100,10);g.fillStyle='#fff';g.font='10px sans-serif';g.textAlign='left';g.fillText('🫁 Air',176,H-15);g.textAlign='center';
+  if(msgT>0){g.fillStyle='#fff';g.font='bold 14px sans-serif';g.fillText(msg,W/2,22)}
+  if(cd>0){g.fillStyle='rgba(0,0,0,.35)';g.fillRect(0,0,W,H);g.fillStyle='#fff';g.font='bold 60px sans-serif';g.fillText(Math.ceil(cd),W/2,H/2+20)}
+  const tm=$('#tm');if(tm)tm.textContent=`${Math.max(0,DUR-el).toFixed(0)} s · distance ${Math.min(100,Math.round(dist/D*100))} %`;
+  return done&&endT<=0});
+ document.removeEventListener('keydown',kd);document.removeEventListener('keyup',ku);
+ return endMG(Math.round(clamp(dist/D,0,1)*100),`${Math.min(100,Math.round(dist/D*100))} % du chemin parcouru`)};
 MG.plongee=async p=>{await mgIntro(EPR.plongee,p);
  const W=400,H=340,SURF=48,DUR=60,NP=8,sm=sickMult(p),dirs={left:[-1,0],right:[1,0],up:[0,-1],down:[0,1]},AR={left:'⬅',right:'➡',up:'⬆',down:'⬇'};
  arena(`<div class="fxt">🤿 Plongée en apnée — ${esc(p.name)}</div>${cvHTML(W,H)}<div class="tm" id="tm"></div><div class="opts" id="pd">${['left','up','down','right'].map(d=>`<button data-d="${d}">${AR[d]}</button>`).join('')}</div><p><small>Nage (flèches, ZQSD ou boutons) pour ramasser les perles et les <b>ramener à la surface</b> avant de manquer d'air. Les méduses 🪼 te coûtent de l'air. À la surface tu reprends ton souffle. Si tu t'évanouis, tu perds les perles transportées.</small></p>`);
@@ -2113,10 +2154,79 @@ async function tieBreaker(tied){
   await fx(`<div class="fxt">${esc(order[i].name)} plonge la main dans le sac…</div><div class="bag">👜</div><div class="balls"><i class="ball show ${b==='B'?'bk':'wh'}"></i></div><p>${b==='B'?'⚫ Boule noire !':'⚪ Boule blanche : sauvé(e) !'}</p>`,2000);
   if(b==='B')return order[i]}
  return order[order.length-1]}
-async function kohCouncil(cands,voters){
+
+/* ---------- diplomatie : chat, alliances cachées, votes concertés ---------- */
+const alOf=p=>(G.al||[]).filter(a=>a.m.includes(p));
+const alNames=a=>a.m.filter(x=>x.alive).map(x=>esc(x.name)).join(', ');
+const allied=(a,b)=>(G.al||[]).some(x=>x.m.includes(a)&&x.m.includes(b));
+function wpick(arr,f){const w=arr.map(f),t=w.reduce((a,b)=>a+b,0);let r=Math.random()*t,i=0;while(i<arr.length-1&&r>=w[i]){r-=w[i];i++}return arr[i]}
+function prep(cands){if(G.fwFor===cands)return;G.fwFor=cands;G.al=G.al||[];G.said=G.said||new Map();
+ const base=x=>1+(x.sick!=null?1.2:0)+(1-(x.skill??.5))*1.5+(x.wins||0)*.5+(G.said.get(x)||0)*.9;
+ G.fw=new Map(cands.map(x=>[x,Math.pow(base(x),2)]));G.focus=wpick(cands,x=>G.fw.get(x));G.al.forEach(a=>a.tg=null)}
+function botPlan(b,cands){prep(cands);const t=cands.filter(c=>c!==b);if(!t.length)return null;
+ const tr=x=>b.trust&&b.trust.has(x);
+ const als=alOf(b);
+ if(als.length&&Math.random()<.85){const a=pick(als),tt=t.filter(c=>!a.m.includes(c));
+  if(tt.length){if(!a.tg||!tt.includes(a.tg))a.tg=wpick(tt,x=>G.fw.get(x)||1);return a.tg}}
+ if(Math.random()<.65&&G.focus&&t.includes(G.focus)&&!tr(G.focus))return G.focus;
+ return wpick(t,x=>(G.fw.get(x)||1)*(tr(x)?.3:1))}
+async function propose(a,b,al){
+ let ok;
+ if(b.bot||(G.fast&&!b.remote))ok=Math.random()<(al?.5:.6);
+ else{const i=await ask(`🤝 <b>${esc(a.name)}</b> te propose une alliance secrète${al?` (elle réunit déjà : ${alNames(al)})`:''}.<br><small>Personne d'autre ne le saura. Tu peux appartenir à plusieurs alliances… et en trahir.</small>`,['✅ Accepter','❌ Refuser'],b);ok=i===0}
+ if(ok){if(al){if(!al.m.includes(b))al.m.push(b)}else G.al.push({m:[a,b],tg:null})}
+ return ok}
+const SAYTXT=(n)=>`💬 <b>${esc(n)}</b>`;
+function announce(p,x){G.said=G.said||new Map();G.said.set(x,(G.said.get(x)||0)+1);log(`${SAYTXT(p.name)} : « Je vote contre <b>${esc(x.name)}</b> ! »`)}
+async function diplomacy(when,cands){
+ if(G.mode!=='koh'||alive().length<3)return;
+ G.al=G.al||[];G.said=G.said||new Map();
+ const als=alive();
+ for(const b of als.filter(x=>x.bot)){
+  if(Math.random()<.3){const mine=alOf(b).filter(a=>a.m.filter(x=>x.alive).length>=2);
+   if(mine.length&&Math.random()<.4){const al=pick(mine),t=als.filter(x=>x!==b&&!al.m.includes(x));if(t.length)await propose(b,pick(t),al)}
+   else{const t=als.filter(x=>x!==b&&!allied(b,x));if(t.length)await propose(b,pick(t))}}}
+ if(when==='council'&&cands){prep(cands);
+  for(const b of als.filter(x=>x.bot)){if(!b.plan||!cands.includes(b.plan)||b.plan===b)b.plan=botPlan(b,cands);
+   if(b.plan&&Math.random()<.7){let said=b.plan;if(Math.random()<.15){const o=cands.filter(c=>c!==b&&c!==b.plan);if(o.length)said=pick(o)}announce(b,said)}}}
+ if(G.fast)return;
+ for(const h of als.filter(x=>!x.bot&&x.alive)){
+  G.cur=h;
+  if(h.inbox&&h.inbox.length){const m=h.inbox.splice(0).join('<br>');await ask(`📬 <b>${esc(h.name)}</b>, messages reçus :<br>${m}`,['OK'],h)}
+  for(let guard=0;guard<30;guard++){
+   const mine=alOf(h).filter(a=>a.m.filter(x=>x.alive).length>=1);
+   const opts=[['pub','📢 Annoncer publiquement mon vote'],['priv','🤫 Message privé à un joueur'],['all','🤝 Proposer une alliance secrète']];
+   if(mine.length)opts.push(['grow','➕ Agrandir une de mes alliances']);
+   opts.push(['see','👁 Mes alliances'],['go','▶ Continuer']);
+   const i=await ask(`💬 <b>${esc(h.name)}</b> — ${when==='council'?'avant le conseil':'discussions du camp'}.<br><small>Dis pour qui tu votes, glisse un mot en privé, ou noue des alliances secrètes (les autres ne les voient pas).</small>`,opts.map(o=>o[1]),h);
+   const k=opts[i][0];if(k==='go')break;
+   const others=alive().filter(x=>x!==h);
+   if(k==='pub'){const pool=(cands&&cands.length?cands:others).filter(x=>x!==h);if(!pool.length)continue;const x=pool[await ask('Contre qui annonces-tu ton vote ?',pool.map(y=>esc(y.name)),h)];announce(h,x);
+    als.filter(b=>b.bot&&b!==x).forEach(b=>{if(Math.random()<.3&&!(b.trust&&b.trust.has(h)&&false))b.plan=x})}
+   else if(k==='priv'){const t=others[await ask('À qui écris-tu ?',others.map(y=>esc(y.name)),h)];
+    const ms=await ask(`Message pour ${esc(t.name)} :`,['🗳️ « Vote avec moi contre… »','🛡️ « Je te protège, je ne voterai pas contre toi »','⚠️ « Méfie-toi de… »','↩ Annuler'],h);if(ms===3)continue;
+    let x=null;if(ms!==1){const pool=alive().filter(y=>y!==h&&y!==t);if(!pool.length)continue;x=pool[await ask('Qui est visé ?',pool.map(y=>esc(y.name)),h)]}
+    const txt=ms===0?`« Vote avec moi contre ${esc(x.name)}. »`:ms===1?'« Je te protège : je ne voterai pas contre toi. »':`« Méfie-toi de ${esc(x.name)}. »`;
+    if(!t.bot){t.inbox=t.inbox||[];t.inbox.push(`🤫 <b>${esc(h.name)}</b> : ${txt}`);if(ms===1){h.trust=h.trust||new Set()}await ask(`Message envoyé à ${esc(t.name)}.`,['OK'],h)}
+    else{let rep;
+     if(ms===0){const ok=Math.random()<.45+(allied(h,t)?.3:0)+(t.trust&&t.trust.has(h)?.1:0);if(ok){t.plan=x;rep=`👍 <b>${esc(t.name)}</b> : « D'accord, je vote ${esc(x.name)} avec toi. »`}else rep=`🤔 <b>${esc(t.name)}</b> : « Je ne suis pas sûr… je vais réfléchir. »`}
+     else if(ms===1){t.trust=t.trust||new Set();t.trust.add(h);if(t.plan===h)t.plan=null;rep=`🤝 <b>${esc(t.name)}</b> : « Merci, je ne voterai pas contre toi non plus. »`}
+     else{if(Math.random()<.4)t.plan=x;rep=`😮 <b>${esc(t.name)}</b> : « Merci de me prévenir. »`}
+     await ask(rep,['OK'],h)}}
+   else if(k==='all'){const pool=others.filter(x=>!allied(h,x));if(!pool.length){await ask('Tu es déjà allié(e) avec tout le monde.',['OK'],h);continue}
+    const t=pool[await ask('Avec qui veux-tu t\'allier en secret ?',pool.map(y=>esc(y.name)),h)];
+    if(t.bot||t.remote||G.humans<=1||true){const ok=await propose(h,t);await ask(ok?`🤝 <b>${esc(t.name)}</b> accepte : vous êtes alliés en secret.`:`❌ <b>${esc(t.name)}</b> refuse l'alliance.`,['OK'],h)}}
+   else if(k==='grow'){const al=mine[mine.length===1?0:await ask('Quelle alliance agrandir ?',mine.map(a=>alNames(a)),h)];
+    const pool=others.filter(x=>!al.m.includes(x));if(!pool.length){await ask('Tout le monde est déjà dans cette alliance.',['OK'],h);continue}
+    const t=pool[await ask('Qui inviter ?',pool.map(y=>esc(y.name)),h)];const ok=await propose(h,t,al);await ask(ok?`🤝 <b>${esc(t.name)}</b> rejoint l'alliance.`:`❌ <b>${esc(t.name)}</b> refuse.`,['OK'],h)}
+   else if(k==='see'){const ls=alOf(h).map(a=>'🤝 '+alNames(a));await ask(ls.length?`Tes alliances secrètes :<br>${ls.join('<br>')}<br><small>Tu peux être dans plusieurs alliances à la fois : à toi de décider qui trahir.</small>`:'Tu n\'as aucune alliance pour l\'instant.',['OK'],h)}}}
+ G.cur=null}
+async function kohCouncil(cands,voters){G.fwFor=null;prep(cands);
+ try{return await kohCouncil0(cands,voters)}finally{G.said=new Map();G.fwFor=null;G.pl.forEach(p=>{p.plan=null})}}
+async function kohCouncil0(cands,voters){
  const vs=voters.filter(p=>p.alive),shield=new Set(),bal=[];
  for(const v of vs){const t=cands.filter(c=>c!==v);if(!t.length)continue;let c;
-  if(v.bot){const w=t.map(x=>1+(x.sick!=null?1.2:0)+(1-(x.skill??.5))*1.5+(x.wins||0)*.5),tot=w.reduce((a,b)=>a+b);let r=Math.random()*tot,i=0;while(r>=w[i]){r-=w[i];i++}c=t[i]}
+  if(v.bot){c=(v.plan&&t.includes(v.plan))?v.plan:botPlan(v,cands);if(!c||!t.includes(c))c=wpick(t,x=>G.fw.get(x)||1)}
   else c=t[await ask(`🗳️ Conseil : tu votes contre…`,t.map(x=>esc(x.name)),v)];
   bal.push([v,c])}
  await fx(`<div class="fxt">🔥 Les votes sont déposés</div>${hostSay('Avant de dévoiler les votes… quelqu\'un souhaite-t-il utiliser son <b>collier d\'immunité</b> ?')}`,3200);
@@ -2130,7 +2240,7 @@ async function kohCouncil(cands,voters){
  log(`⚖️ Égalité entre ${top.map(c=>esc(c.name)).join(' et ')} : nouveau vote.`);
  await fx(`<div class="fxt">⚖️ Égalité !</div>${hostSay(`${top.map(c=>'<b>'+esc(c.name)+'</b>').join(' et ')} sont à égalité. Nous allons revoter, uniquement entre eux.`)}`,3200);
  const v2=vs.filter(v=>!top.includes(v)),voters2=v2.length?v2:vs,bal2=[];
- for(const v of voters2){const t=top.filter(c=>c!==v);if(!t.length)continue;const c=v.bot?pick(t):t[await ask(`🗳️ Égalité : tu votes contre…`,t.map(x=>esc(x.name)),v)];bal2.push([v,c])}
+ for(const v of voters2){const t=top.filter(c=>c!==v);if(!t.length)continue;const c=v.bot?((v.plan&&t.includes(v.plan))?v.plan:wpick(t,x=>(G.fw&&G.fw.get(x))||1)):t[await ask(`🗳️ Égalité : tu votes contre…`,t.map(x=>esc(x.name)),v)];bal2.push([v,c])}
  if(!bal2.length)return tieBreaker(top);
  const t2=await councilReveal(bal2,new Set(),'Second vote');
  top=topOf(t2,top);if(top.length===1)return top[0];
@@ -2158,6 +2268,7 @@ async function eliminationVote0(){
  else{const im=G.immuneP&&G.immuneP.alive?G.immuneP:null;cands=alive().filter(p=>p!==im&&p!==G.ambImm);voters=alive();intro=im?`${esc(im.name)} est immunisé(e). Tous les autres sont en danger.`:'Personne n\'est immunisé : tous les aventuriers sont en danger.'}
  if(cands.length<1){log('Personne à éliminer ce soir.');return}
  await show(`<div class="fxt">🔥 Conseil d'élimination</div>${hostSay(intro+linkTxt())}<div class="line">${cands.map(p=>`<div class="who">${human(p.col,'sway',p.name)}${esc(p.name)}</div>`).join('')}</div>`,'Passer au vote ▶');
+ await diplomacy('council',cands);
  const v=await kohCouncil(cands,voters);
  if(!v){log('🔥 Tous les votes ont été annulés : personne n\'est éliminé.');await drain();G.immuneTeam=G.immuneP=G.ambImm=G.loseTeam=null;return}
  log(`🔥 Le conseil a voté : ${esc(v.name)}.`);
@@ -2253,8 +2364,8 @@ function mergeCheck(){if(G.mode!=='koh'||G.kmode!=='teams'||G.merged)return;
 /* ---------- boucle de jeu ---------- */
 function end(title,msg){G.over=true;render();const m=$('#modal');m.hidden=false;$('#setup').onclick=null;$('#setup').innerHTML=`<p>${title} ${msg}</p><button class="big" onclick="location.reload()">Rejouer</button>`}
 function kohEnd(){const w=alive()[0];if(!w)return end('💀 <b>Fin de l\'aventure.</b>','Personne n\'a survécu.');end(w.bot?'🏆 <b>Fin de l\'aventure.</b>':'🏆 <b>Victoire !</b>',`<b>${esc(w.name)}</b> remporte l'aventure Koh-Lanta !`)}
-function drawWeather(){if(!G.wdeck.length)G.wdeck=shuffle(makeW());return G.wdeck.shift()}
-const makeW=()=>[0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3];
+function drawWeather(){if(!G.wdeck.length)G.wdeck=shuffle(makeW(G.mode==='koh'));return G.wdeck.shift()}
+const makeW=koh=>koh?[0,0,0,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,3].concat(Math.random()<.5?[4]:[]):[0,0,0,1,1,1,1,1,1,2,2,2,2,2,2,2,3,3,3,3];
 async function play(){
  const koh=G.mode==='koh';
  while(!G.over){
@@ -2262,19 +2373,21 @@ async function play(){
   if(G.round>1){if(G.next&&G.next.alive)G.first=G.next.i;else{let j=G.first;do{j=(j-1+N)%N}while(!G.pl[j].alive);G.first=j}G.next=null}
   else if(!G.pl[G.first].alive)G.first=0;
   G.w=drawWeather();if(G.w==='H')G.hurr=true;
-  log(`<hr><b>${koh?'Jour':'Tour'} ${G.round}</b> — météo ${WI[G.w]}${G.w===0?(koh?' (grand soleil)':' (grand soleil : pas d\'eau)'):G.w===3?' (orage : +1 eau)':''}${koh?' — '+DAYL[(G.round-1)%3]:''}${G.hurr?' 🌀 L\'OURAGAN ARRIVE : le radeau doit partir à la fin du tour !':''}`);render();
+  log(`<hr><b>${koh?'Jour':'Tour'} ${G.round}</b> — météo ${WI[G.w]}${G.w===0?(koh?' (grand soleil)':' (grand soleil : pas d\'eau)'):G.w===3?' (orage : +1 eau)':G.w===4?' (nuit douce : le feu ne consomme aucun bois)':''}${koh?' — '+DAYL[(G.round-1)%3]:''}${G.hurr?' 🌀 L\'OURAGAN ARRIVE : le radeau doit partir à la fin du tour !':''}`);render();
   await weatherFx();
+  if(koh)await diplomacy('day');
   for(let d=0;d<N;d++){const p=G.pl[(G.first+d)%N];if(!p.alive)continue;
    if(koh&&G.exile!=null&&!G.merged&&p.camp===G.exile){log(`🏝️ ${esc(p.name)} est sur l'île des bannis : aucune action aujourd'hui.`);if(!p.bot&&!G.fast){G.cur=p;await ask(`🏝️ ${esc(p.name)}, ta tribu est sur l'<b>île des bannis</b> jusqu'à demain : aucune action possible aujourd'hui.`,['Continuer ▶'],p)}continue}
    await turn(p);if(koh&&alive().length<=1)break}
   G.exile=null;G.cur=null;
   if(koh){if(mergeCheck())await ambassadors(true);await kohEvent(DAYK[(G.round-1)%3]);if(mergeCheck())await ambassadors(false);await drain();await fateLinks();if(alive().length<=1)return kohEnd();if(alive().length===2)return finale()}
-  if(koh)alive().forEach(p=>{if(p.bot&&p.sick!=null&&p.hand.includes('sucre'))eatSugar(p);if(p.sick!=null&&p.sick<G.round)p.sick=null});
+  if(koh)alive().forEach(p=>{if(p.bot&&p.hand.includes('bois')&&camp(p).wood<=4){p.hand.splice(p.hand.indexOf('bois'),1);camp(p).wood=Math.min(36,camp(p).wood+3);log(`🪵 ${esc(p.name)} ajoute des bûches sèches au tas : +3 bois.`)}if(p.bot&&p.sick!=null&&p.hand.includes('sucre'))eatSugar(p);if(p.sick!=null&&p.sick<G.round)p.sick=null});
+  G.hit=new Set();
   for(let ci=0;ci<G.camps.length;ci++){const c=G.camps[ci];
    await consume(ci,'water');
-   let fire=false;if(koh&&c.fire){const cost=fireCost();if(c.wood>=cost){c.wood-=cost;fire=true;if(cost>1)log(`${WI[G.w]} Avec ce temps, le feu ${G.camps.length>1?'de la '+esc(c.name):'du camp'} brûle plus vite : −${cost} bois.`)}else{c.wood=0;c.fire=false;log(`🪵 Pas assez de bois (${cost} nécessaire${cost>1?'s':''} avec ce temps) : le feu ${G.camps.length>1?'chez '+esc(c.name):'du camp'} s'éteint, il faudra le rallumer.`);evt('💨 Le feu s\'éteint…',1300)}}
+   let fire=false;if(koh&&c.fire){const cost=fireCost();if(c.wood>=cost){c.wood-=cost;fire=true;if(cost===0)log(`${WI[G.w]} Nuit sans vent : le feu ${G.camps.length>1?'de la '+esc(c.name):'du camp'} ne consomme aucun bois !`);if(cost>1)log(`${WI[G.w]} Avec ce temps, le feu ${G.camps.length>1?'de la '+esc(c.name):'du camp'} brûle plus vite : −${cost} bois.`)}else{c.wood=0;c.fire=false;log(`🪵 Pas assez de bois (${cost} nécessaire${cost>1?'s':''} avec ce temps) : le feu ${G.camps.length>1?'chez '+esc(c.name):'du camp'} s'éteint, il faudra le rallumer.`);evt('💨 Le feu s\'éteint…',1300)}}
    await consume(ci,'food');
-   if(koh&&members(ci).length){if(fire){}else{log(`🔥 Pas de feu ${G.camps.length>1?'chez '+esc(c.name):'au camp'} : repas cru, 80 % de risque d'être malade !`);evt('💨 Le feu est éteint : repas cru…',1400);members(ci).forEach(p=>{if(G.round>1&&Math.random()<.8)makeSick(p)});if(G.round===1)log('🌙 Première nuit : personne ne tombe malade, mais dès demain il faudra un feu !')}}
+   if(koh&&members(ci).length){if(fire){}else{log(`🔥 Pas de feu ${G.camps.length>1?'chez '+esc(c.name):'au camp'} : repas cru, 40 % de risque d'être malade !`);evt('💨 Le feu est éteint : repas cru…',1400);members(ci).forEach(p=>{if(G.round>1&&Math.random()<.4)makeSick(p)});if(G.round===1)log('🌙 Première nuit : personne ne tombe malade, mais dès demain il faudra un feu !')}}
    await drain()}
   render();await recap();
   const n=alive().length;
@@ -2303,8 +2416,8 @@ async function start(){
  if(pl.every(p=>p.bot))pl[0].bot=false;
  const mk=(m,name,col)=>{const [f,w]=START[Math.max(3,m)];return{name,col,food:Math.round(f*D.m),water:Math.round(w*D.m),wood:0,fire:false,raft:0}};
  const camps=teams?TEAMS.slice(0,nT).map((T,t)=>mk(pl.filter(p=>p.camp===t).length,T.name,T.col)):[mk(n,koh?'Camp':'Camp des naufragés','#2bb3a3')];
- G={mode:S.mode,kmode:S.kmode,diff:S.diff,pl,camps,epave:ep,ile:koh?shuffle([...Array(20).fill('rien'),...Array(8).fill('manioc'),...Array(5).fill('coco'),...Array(4).fill('banane'),...Array(4).fill('sucre'),...Array(2).fill('idole')]):[],adv:null,round:0,first:0,next:null,cur:null,w:null,hurr:false,over:false,sel:null,pend:null,pv:null,fast:false,q:[],merged:false,exile:null,fireMode:S.fire||'game',nt:nT,reunion:S.reunion,amb:S.amb!==false,loseTeam:null,immuneTeam:null,immuneP:null,lastEpr:null,
-  white:D.w,black:D.b,bag:Array(D.w).fill('W').concat(Array(D.b).fill('B')),wdeck:koh?shuffle(makeW()):(()=>{const W=shuffle(makeW());return[...W.slice(0,12),...shuffle([...W.slice(12),'H'])]})(),humans:pl.filter(p=>!p.bot&&!p.remote).length};
+ G={mode:S.mode,kmode:S.kmode,diff:S.diff,pl,camps,epave:ep,al:[],said:new Map(),hit:new Set(),ile:koh?shuffle([...Array(14).fill('rien'),...Array(5).fill('bois'),...Array(8).fill('manioc'),...Array(5).fill('coco'),...Array(4).fill('banane'),...Array(4).fill('sucre'),...Array(2).fill('idole')]):[],adv:null,round:0,first:0,next:null,cur:null,w:null,hurr:false,over:false,sel:null,pend:null,pv:null,fast:false,q:[],merged:false,exile:null,fireMode:S.fire||'game',nt:nT,reunion:S.reunion,amb:S.amb!==false,loseTeam:null,immuneTeam:null,immuneP:null,lastEpr:null,
+  white:D.w,black:D.b,bag:Array(D.w).fill('W').concat(Array(D.b).fill('B')),wdeck:koh?shuffle(makeW(true)):(()=>{const W=shuffle(makeW());return[...W.slice(0,12),...shuffle([...W.slice(12),'H'])]})(),humans:pl.filter(p=>!p.bot&&!p.remote).length};
  viewer=G.humans===1?pl.find(p=>!p.bot&&!p.remote):null;if(NET.on)netStart();
  $('#h1').textContent=koh?'🔥 Koh-Lanta':'🏝️ Galèrapagos';
  $('#game').hidden=false;$('#modal').hidden=true;if(teams&&S.split==='capt'){music(S.music);await captainDraft(nT)}if(koh){music(S.music);await story(kohSlides(pl,teams))}else{ambOn();await story(introSlides(pl.map(p=>p.name)),ambSlide);ambOff();music(S.music)}
