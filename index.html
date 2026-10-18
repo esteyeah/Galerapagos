@@ -896,7 +896,7 @@ const EPR={
  course:{icon:'🏃',name:'Course 3D',kind:'Immunité',desc:'Sprint 3D à plusieurs : tous les aventuriers courent côte à côte sur la plage et tu les vois en même temps. Spamme Espace (ou A sur la manette) pour avancer le plus vite possible jusqu\'à l\'arche d\'arrivée.'},
  reflexes:{icon:'⚡',name:'Réflexes au signal',kind:'Immunité',desc:'Attends que le signal passe au vert, puis clique le plus vite possible. Partir trop tôt = 0 point. 3 manches.'},
  lancer:{icon:'🎯',name:'Lancer de précision',kind:'Confort',desc:'Le viseur bouge sans cesse. Clique pour lancer ton sac au centre de la cible. 3 lancers, de plus en plus rapides.'},
- memoire:{icon:'🧠',name:'Mémoire des totems',kind:'Confort',desc:'Observe la suite de totems qui s\'allument, puis reproduis-la. La suite s\'allonge à l\'infini : elle ne s\'arrête que si tu te trompes, ou au bout de 2 min 30 ! Par équipes : c\'est un relais (chacun son tour, la première tribu dont tous les membres ont terminé gagne).'},
+ memoire:{icon:'🧠',name:'Mémoire des totems',kind:'Confort',desc:'Observe la suite de totems qui s\'allument, puis reproduis-la. La suite s\'allonge à l\'infini : elle ne s\'arrête que si tu te trompes, ou au bout de 2 min 30 ! Par équipes : c\'est un relais (chacun son tour, 1 min 30 max chacun) et la tribu qui totalise le plus de suites réussies gagne.'},
  paresseux:{icon:'🦥',name:'Le paresseux',kind:'Immunité',desc:'Épreuve solo : suspendu à une poutre au-dessus de l\'eau comme un paresseux, il faut tenir le plus longtemps possible. Tape Q pour reposer tes bras et D pour tes jambes (en alternance c\'est mieux) mais jamais les deux en même temps : tu te déséquilibres et tes deux jauges chutent. Facile au début, de plus en plus dur ensuite. Cramponne-toi avec Espace quand la poutre se secoue. Le dernier suspendu gagne !'},
  chrono:{icon:'⏳',name:'Le sablier (éliminatoire)',kind:'Confort',desc:'Tous les aventuriers jouent chaque manche : arrête le sablier au plus près du temps annoncé, qui change à chaque manche (le chrono disparaît après 2 s). À chaque manche, les plus éloignés de la cible sont éliminés de l\'épreuve ; le dernier en lice gagne.'},
  paires:{icon:'🧩',name:'Paires de totems',kind:'Confort',desc:'Retrouve les 6 paires de symboles avant la fin du temps (40 secondes). Plus tu es rapide, plus tu marques. Par équipes : c\'est un relais ! Toute la tribu partage un seul plateau, chacun joue à son tour jusqu\'au premier raté, et la tribu la plus rapide à tout retrouver gagne.'},
@@ -1393,7 +1393,7 @@ async function duelChallenge(ps,indiv){
   top=pool[0];E(top).score=100;E(top).note='champion de la corde'}
  G.adv=null;
  entries.forEach(e=>{e.win=indiv?e.p===top:e.p.camp===winTeam});entries.filter(e=>e.win).forEach(e=>{e.p.wins=(e.p.wins||0)+1});if(G.mode==='koh')entries.filter(e=>e.win).forEach(e=>raiseForm(e.p));
- closeArena();await resultsAnim(`${EPR.corde.icon} ${EPR.corde.name}`,entries,teams);
+ closeArena();await resultsAnim(`${EPR.corde.icon} ${EPR.corde.name}`,entries,teams);await celebrate(entries,teams,indiv,winTeam,top);
  return{winTeam,loseTeam,top}}
 
 /* ---------- Les poteaux : tous en même temps ---------- */
@@ -2405,28 +2405,31 @@ async function plancheGame(teams){
 
 /* ---------- Mémoire en relais (N tribus) ---------- */
 async function memRelay(teams){
- const R=Math.max(...teams.map(t=>t.length))>=5?3:4,ic=['🔥','🌴','🐚','🦜'],T=teams.map(()=>({t:0,legs:[]}));
+ const ic=['🔥','🌴','🐚','🦜'],LIM=90000,T=teams.map(()=>({tot:0,legs:[]}));
  const leg=async(p,ti,k,n)=>{
-  arena(`<div class="fxt">🧠 Relais mémoire — ${esc(TM(ti).name)} — ${esc(p.name)} (${k+1}/${n})</div><div class="tm" id="tm"></div><div class="opts" id="ic">${ic.map((x,i)=>`<button class="tot" data-i="${i}">${x}</button>`).join('')}</div><p><small>Chaque coéquipier passe à son tour : reproduis la suite de totems le plus vite possible. La première tribu dont tous les membres ont fini gagne !</small></p>`);
+  arena(`<div class="fxt">🧠 Relais mémoire — ${esc(TM(ti).name)} — ${esc(p.name)} (${k+1}/${n})</div><div class="tm" id="tm"></div><div class="opts" id="ic">${ic.map((x,i)=>`<button class="tot" data-i="${i}">${x}</button>`).join('')}</div><p><small>Suite de totems infinie : elle s'allonge jusqu'à ce que tu te trompes (ou 1 min 30). Chaque coéquipier joue à son tour et la tribu qui totalise le plus de suites réussies gagne !</small></p>`);
+  const t0=performance.now(),LM=LIM*TS,left=()=>Math.max(0,LM-(performance.now()-t0)),fmt=()=>{const r=Math.ceil(left()/1000/TS);return Math.floor(r/60)+':'+String(r%60).padStart(2,'0')};
   const flash=async(i,ms)=>{const b=$('#ic')&&$('#ic').children[i];if(!b)return;b.classList.add('lit');await sleep(ms);b.classList.remove('lit')};
-  const seq=[];const t0=performance.now();
-  for(let r=0;r<R;r++){seq.push(Math.random()*4|0);let ok=false;
-   while(!ok){const tm=$('#tm');if(tm)tm.textContent=`Manche ${r+1}/${R} : regarde…`;await sleep(450);for(const i of seq){await flash(i,380);await sleep(140)}
-    if($('#tm'))$('#tm').textContent='À toi !';
-    ok=await new Promise(res=>{let j=0;$('#ic').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i;flash(i,180);if(i!==seq[j]){res(false);return}j++;if(j===seq.length)res(true)}});
-    $('#ic').onclick=null;if(!ok&&$('#tm')){$('#tm').textContent='❌ Raté ! On recommence la manche…';await sleep(700)}}}
-  const dt=(performance.now()-t0)/1000;closeArena();return dt};
+  const seq=[];let done=0,over=false;
+  while(!over){seq.push(Math.random()*4|0);const tm=$('#tm');if(tm)tm.textContent=`Suite de ${seq.length} · ⏱ ${fmt()} · regarde…`;await sleep(550);
+   const sp=Math.max(190,450-done*10),gap=Math.max(60,180-done*5);
+   for(const i of seq){if(left()<=0){over=true;break}await flash(i,sp);await sleep(gap)}
+   if(over)break;
+   if($('#tm'))$('#tm').textContent=`Suite de ${seq.length} · à toi !`;
+   const ok=await new Promise(res=>{let j=0,iv=setInterval(()=>{const t2=$('#tm');if(t2)t2.textContent=`Suite de ${seq.length} · ${j}/${seq.length} · ⏱ ${fmt()}`;if(left()<=0){clearInterval(iv);$('#ic').onclick=null;res(false)}},200);
+    $('#ic').onclick=e=>{const b=e.target.closest('button');if(!b)return;const i=+b.dataset.i;flash(i,170);if(i!==seq[j]){clearInterval(iv);res(false);return}j++;if(j===seq.length){clearInterval(iv);res(true)}}});
+   $('#ic').onclick=null;if(!ok)break;done++}
+  if($('#tm'))$('#tm').textContent=`Terminé : ${done} suite(s) réussie(s)`;await sleep(900);closeArena();return done};
+ const botRun=p=>{const s=p.skill??.5,sm=sickMult(p);let d=0;for(let L=1;L<40;L++){const pr=clamp((1.03-L*(.06-.035*s))*Math.min(1,.8+.2*sm),.05,.99);if(Math.random()<pr)d++;else break}return d};
  for(let ti=0;ti<teams.length;ti++){const t=teams[ti];
   for(let k=0;k<t.length;k++){const p=t[k];let d;
    if(!p.bot&&interOK()){if(G.humans>1)await arenaWait(`<div class="fxt">Passe l'appareil à ${esc(p.name)}</div>`,'Je suis '+esc(p.name));d=await leg(p,ti,k,t.length)}
-   else d=(7+(1-(p.skill??.5))*9+Math.random()*3)*(R/4)/sickMult(p);
-   T[ti].t+=d;T[ti].legs.push([p,d])}}
- const order=T.map((_,i)=>i).sort((a,b)=>T[a].t-T[b].t||Math.random()-.5);
- if(interOK()&&teams.flat().some(p=>!p.bot))await show(`<div class="fxt">🧠 Résultat du relais</div>${order.map((i,k)=>`<p style="color:${TM(i).col}"><b>${esc(TM(i).name)}</b> : ${T[i].t.toFixed(1)} s ${k===0?'🏆':''}</p><small>${T[i].legs.map(l=>esc(l[0].name)+' '+l[1].toFixed(1)+' s').join(' · ')}</small>`).join('')}`,'Continuer ▶');
- const m=new Map();teams.forEach((t,ti)=>{const k=order.indexOf(ti);T[ti].legs.forEach(([p,d])=>m.set(p,k===0?Math.round(clamp(100-d*1.2,70,98)):Math.round(clamp(55-d*1.2-(k-1)*8,10,50))))});
- const h=T[order[0]].legs.find(l=>!l[0].bot);if(h)LASTT=T[order[0]].t;
+   else d=botRun(p);
+   T[ti].tot+=d;T[ti].legs.push([p,d])}}
+ const order=T.map((_,i)=>i).sort((a,b)=>T[b].tot-T[a].tot||Math.random()-.5);
+ if(interOK()&&teams.flat().some(p=>!p.bot))await show(`<div class="fxt">🧠 Résultat du relais</div>${order.map((i,k)=>`<p style="color:${TM(i).col}"><b>${esc(TM(i).name)}</b> : ${T[i].tot} suite(s) réussie(s) ${k===0?'🏆':''}</p><small>${T[i].legs.map(l=>esc(l[0].name)+' '+l[1]).join(' · ')}</small>`).join('')}`,'Continuer ▶');
+ const m=new Map();teams.forEach((t,ti)=>{const k=order.indexOf(ti);T[ti].legs.forEach(([p,d])=>m.set(p,k===0?Math.round(clamp(72+d*2,70,98)):Math.round(clamp(30+d*2-(k-1)*8,10,55))))});
  return m}
-
 /* ---------- Paires en relais (N tribus) : un seul plateau par tribu ---------- */
 async function pairsRelay(teams){
  const SY=['🔥','🌴','🐚','🦜','🐍','🥥'],T=teams.map(()=>({t:0,by:new Map()}));
@@ -2642,7 +2645,7 @@ async function celebrate(entries,teams,indiv,winTeam,top){
  if(!grp.length||!grp[0])return;G.lastCel=c.k;
  const who=indiv?esc(top.name):'La '+esc(TEAMS[winTeam].name);
  const say=indiv?pick(['Merci !','Bien joué','Ouf !','Victoire']):pick(['Yeaaah !','On a gagné !','Ensemble !','Quelle équipe !','C\'est pour nous !']);
- await fx(`<div class="fxt">${who} ${indiv?'gagne':'gagne'} !</div><div class="cel ${c.k}"><div class="bub">${say}</div>${celebHTML(c.k,grp,indiv)}</div><p>${c.t}</p>`,4600)}
+ await show(`<div class="fxt">${who} gagne !</div><div class="cel ${c.k}"><div class="bub">${say}</div>${celebHTML(c.k,grp,indiv)}</div><p>${c.t}</p>`,'Continuer ▶')}
 async function resultsAnim(title,entries,teams){
  const lanes=entries.map(e=>`<div class="lane ${e.win?'win':''}"><div class="fig" data-l="${Math.min(84,e.score*.84)}%">${human(e.p.col,'run',e.p.name)}</div><span class="nm">${esc(e.p.name)} · ${e.score}${e.note?' <small>('+e.note+')</small>':''}</span></div>`).join('');
  const th=teams?'<div class="rc">'+teams.map(t=>`<div class="rb"><span>${esc(t.name)}</span><div class="meter"><i data-w="${Math.max(0,t.avg)}%" style="width:0;background:${t.col}"></i></div><b>${t.avg<0?'–':t.avg}</b></div>`).join('')+'</div>':'';
