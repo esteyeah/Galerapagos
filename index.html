@@ -89,6 +89,69 @@ button.sel,button.big{background:var(--lag);color:#06222a}
 @keyframes up2{from{transform:rotate(-140deg)}to{transform:rotate(-175deg)}}
 .hum.sway{animation:sway 1s infinite alternate;transform-origin:50% 100%}
 @keyframes sway{from{transform:rotate(-6deg)}to{transform:rotate(6deg)}}
+.cel{position:relative;height:210px;margin:6px auto;width:min(440px,100%);container-type:inline-size;overflow:hidden;border-radius:12px;background:linear-gradient(#0000 70%,#0006 70%)}
+.cel .cw{position:absolute;left:calc(var(--x)*1%);bottom:var(--b,22px);margin-left:-17px;text-align:center}
+.cel .cw b{display:block;font:700 .62rem sans-serif;white-space:nowrap;margin-left:-14px;margin-right:-14px}
+.cel .cw svg{display:block;margin:0 auto}
+.cel.jump .cw{animation:cjump .5s ease-out infinite alternate;animation-delay:calc(var(--i)*-.17s)}
+@keyframes cjump{from{transform:translateY(0)}to{transform:translateY(-46px)}}
+.cel.ola .cw{animation:cola 1.6s infinite;animation-delay:calc(var(--i)*.16s)}
+@keyframes cola{0%,35%,100%{transform:none}17%{transform:translateY(-54px)}}
+.cel.hug .cw{animation:chug 2.2s ease-in-out infinite alternate}
+@keyframes chug{0%,15%{transform:none}60%,100%{transform:translateX(calc(var(--dx)*1cqw)) scale(1.06)}}
+.hum.hr .a1,.hum.hr .a2{animation:ahr .5s infinite alternate}
+.hum.hl .a1,.hum.hl .a2{animation:ahl .5s infinite alternate}
+@keyframes ahr{from{transform:rotate(-70deg)}to{transform:rotate(-100deg)}}
+@keyframes ahl{from{transform:rotate(70deg)}to{transform:rotate(100deg)}}
+.hum.ckr .a2{animation:ckr .35s infinite alternate}.hum.ckl .a1{animation:ckl .35s infinite alternate}
+@keyframes ckr{from{transform:rotate(-135deg)}to{transform:rotate(-155deg)}}
+@keyframes ckl{from{transform:rotate(135deg)}to{transform:rotate(155deg)}}
+.cel.check .cw{animation:cchk 1.2s ease-in-out infinite alternate}
+@keyframes cchk{0%{transform:none}100%{transform:translateX(calc(var(--dx)*1cqw))}}
+.cel .hrt,.cel .hand{position:absolute;font-size:1.7rem;animation:chr 1.5s infinite;opacity:0}
+@keyframes chr{0%{transform:translateY(0) scale(.5);opacity:0}20%{opacity:1}100%{transform:translateY(-70px) scale(1.2);opacity:0}}
+.cel .hand{animation:chp .6s infinite alternate;opacity:1}
+@keyframes chp{from{transform:scale(.7) rotate(-12deg)}to{transform:scale(1.4) rotate(12deg)}}
+.cel.ronde .cw{left:50%;bottom:74px;animation:cox 2s ease-in-out infinite alternate;animation-delay:calc(var(--i)*var(--ph)*-1s)}
+.cel.ronde .cw>.oy{animation:coy 2s ease-in-out infinite alternate;animation-delay:calc((var(--i)*var(--ph) + 1)*-1s)}
+@keyframes cox{from{transform:translateX(-120px)}to{transform:translateX(120px)}}
+@keyframes coy{from{transform:translateY(-30px)}to{transform:translateY(30px)}}
+.cel .fire{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);font-size:2.4rem;animation:cfl .3s infinite alternate}
+@keyframes cfl{from{transform:translateX(-50%) scale(1)}to{transform:translateX(-50%) scale(1.18) rotate(4deg)}}
+.cel.pyr .top{animation:cpy .5s ease-in-out infinite alternate}
+@keyframes cpy{from{transform:translateY(0)}to{transform:translateY(-8px)}}
+.cel.toss .mid{animation:ctoss 1.5s ease-in-out infinite}
+@keyframes ctoss{0%,100%{transform:translateY(0) rotate(0)}50%{transform:translateY(-120px) rotate(12deg)}}
+.cel.toss .sd{animation:cjump .5s ease-out infinite alternate;animation-delay:calc(var(--i)*-.2s)}
+.cel .cf{position:absolute;top:-20px;font-size:1.1rem;animation:ccf 2.6s linear infinite}
+@keyframes ccf{to{transform:translateY(240px) rotate(240deg)}}
+.cel .bub{position:absolute;left:50%;top:4px;transform:translateX(-50%);background:#fff;color:#222;border-radius:12px;padding:3px 10px;font:800 .8rem sans-serif;animation:chp .5s infinite alternate}
+/* camp explorable */
+.campw{position:relative;width:100%;max-width:540px;height:310px;margin:6px auto;border-radius:14px;overflow:hidden;border:3px solid #e6c88a;touch-action:none;user-select:none;background:linear-gradient(#8fd6f3 0,#c5ecf7 18%,#3f8f4c 18%,#5faa5e 52%,#e8d49a 52%,#efdca4 78%,#2fa6c9 78%,#1b7fa8 100%)}
+.campw .sp{position:absolute;transform:translate(-50%,-50%);text-align:center;font-size:2rem;line-height:1;pointer-events:none}
+.campw .sp small{display:block;font:700 .58rem sans-serif;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000;white-space:nowrap}
+.campw .sp.on{filter:drop-shadow(0 0 8px #fff) drop-shadow(0 0 4px gold);animation:spb .5s infinite alternate}
+@keyframes spb{from{transform:translate(-50%,-50%) scale(1)}to{transform:translate(-50%,-56%) scale(1.14)}}
+.campw .pw{position:absolute;transform:translate(-50%,-100%);pointer-events:none;width:44px;text-align:center}
+.campw .pw svg{display:block;margin:0 auto;width:30px;height:55px}
+.campw .pw b{display:block;font:700 .55rem sans-serif;color:#fff;text-shadow:0 1px 2px #000,0 0 3px #000;white-space:nowrap}
+.campw .pw i{position:absolute;left:50%;bottom:62px;transform:translateX(-50%);font-style:normal;font-size:.9rem;background:#fffd;border-radius:9px;padding:0 5px;white-space:nowrap}
+.campw .glow{position:absolute;width:130px;height:130px;border-radius:50%;background:radial-gradient(#ffb34788,#0000 65%);transform:translate(-50%,-50%);animation:glw .3s infinite alternate;pointer-events:none}
+@keyframes glw{from{opacity:.65}to{opacity:1}}
+.campw .hud{position:absolute;left:6px;top:4px;background:#0009;color:#fff;border-radius:9px;padding:2px 8px;font:700 .72rem sans-serif;z-index:5}
+.campw .wth{position:absolute;right:6px;top:4px;font-size:1.3rem;z-index:5}
+.campw .amb{position:absolute;pointer-events:none;font-size:1.1rem}
+.campw .amb.bd{top:6%;left:-8%;animation:cbd 14s linear infinite}
+@keyframes cbd{to{left:108%}}
+.campw .amb.cr{top:68%;left:20%;animation:ccr 6s ease-in-out infinite alternate}
+@keyframes ccr{to{left:70%}}
+.campw .amb.fi{top:84%;left:30%;animation:cfi 3.2s ease-in-out infinite}
+@keyframes cfi{0%,70%,100%{opacity:0;transform:translateY(6px)}80%{opacity:1;transform:translateY(-14px) rotate(-30deg)}90%{opacity:1;transform:translateY(2px) rotate(30deg)}}
+.campw .sea{position:absolute;left:0;right:0;bottom:0;height:22%;overflow:hidden;pointer-events:none}
+.campw .sea:before{content:"〰️ 〰️ 〰️ 〰️ 〰️ 〰️ 〰️ 〰️ 〰️ 〰️ 〰️ 〰️";position:absolute;left:0;top:4px;white-space:nowrap;opacity:.45;animation:csw 6s linear infinite;font-size:1rem}
+@keyframes csw{to{transform:translateX(-120px)}}
+.campb{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:4px 0}
+
 .lane{position:relative;height:74px;background:#0b2229;border-radius:10px;margin:6px 0;overflow:hidden;text-align:left}
 .lane::after{content:'🏁';position:absolute;right:6px;bottom:4px}
 .lane .fig{position:absolute;left:0;bottom:2px;transition:left 2.4s cubic-bezier(.25,.7,.35,1)}
@@ -613,6 +676,64 @@ function botAct(p){const c=camp(p),koh=G.mode==='koh',m=members(p.camp).length;
  const wt=[c.food<m*2?7:2,(koh||G.w!==0)?(c.water<m*2?7:2):0,koh?(!c.fire?30:c.wood<=fireCost()?8:c.wood<=fireCost()*2+1?3:1):(c.raft<m?4:1),2],t=wt.reduce((a,b)=>a+b);let r=Math.random()*t,i=0;while(r>=wt[i]){r-=wt[i];i++}return i}
 function botK(){let best=1,bv=-1;for(let k=1;k<=6;k++){const v=k*pOK(k);if(v>bv){bv=v;best=k}}
  if(Math.random()<.35)best=Math.max(1,Math.min(6,best+(Math.random()<.5?-1:1)));return best}
+/* ---------- camp explorable ---------- */
+function campWalk(p,I){return new Promise(res=>{
+ const fire=!!I.fire;
+ const SP=[
+  {id:0,x:50,y:84,ico:'🎣',lab:'Plage : pêcher',act:'🎣 Pêcher des poissons'},
+  {id:1,x:86,y:30,ico:'💧',lab:'Source : eau',act:'💧 Puiser de l\'eau'},
+  {id:2,x:50,y:50,ico:fire?'🔥':'🪨',lab:fire?'Feu allumé':'Foyer éteint',act:fire?'🔥 Le feu brûle (pas d\'action)':'🔥 Allumer le feu',no:fire,f:1},
+  {id:2,x:14,y:62,ico:'🪵',lab:'Forêt : bois',act:'🪵 Ramasser du bois',no:!fire,why:'Allume d\'abord le feu (au centre du camp).'},
+  {id:3,x:15,y:25,ico:'🌿',lab:'Jungle : fouiller',act:'🌴 Fouiller l\'île'},
+  {id:4,x:84,y:60,ico:'⛺',lab:'Abri : se reposer',act:'😴 Se reposer (passer son tour)'}];
+ const mates=(I.mates||[]).slice(0,5).map((m,i)=>({n:m.name,c:m.col,x:30+Math.random()*40,y:44+Math.random()*30,tx:0,ty:0,w:Math.random()*2,bub:0,i}));
+ arena(`<div class="fxt">🏕️ Le camp — ${esc(p.name)}</div><div class="campw" id="cw"><div class="amb bd">🐦</div><div class="amb cr">🦀</div><div class="amb fi">🐟</div><div class="sea"></div><div class="hud" id="chud"></div><div class="wth">${I.wi||'☀️'}</div>
+  ${fire?'<div class="glow" style="left:50%;top:52%"></div>':''}
+  ${SP.map((s,i)=>`<div class="sp" id="sp${i}" style="left:${s.x}%;top:${s.y}%">${s.ico}<small>${s.lab}</small></div>`).join('')}
+  ${mates.map((m,i)=>`<div class="pw" id="m${i}">${human(m.c,'',m.n)}<b>${esc(m.n)}</b></div>`).join('')}
+  <div class="pw" id="me" style="z-index:9">${human(p.col,'',p.name)}<b>${esc(p.name)}</b></div></div>
+  <div class="tm" id="cwi">Marche avec les flèches / ZQSD, ou touche la scène. Approche-toi d'un lieu.</div>
+  <div class="campb"><button class="big" id="cwa" disabled>Approche-toi d'un lieu…</button><button id="cwb">↩ Cartes / retour</button></div>`);
+ const box=$('#cw'),me=$('#me'),act=$('#cwa'),inf=$('#cwi');
+ if(!box)return res(5);
+ $('#chud').textContent=`💧 ${I.water??'?'}  🐟 ${I.food??'?'}  🪵 ${I.wood??'?'}  ·  🔥 ${fire?'allumé':'éteint'}`;
+ let X=50,Y=70,tx=null,ty=null,face=1,moving=false,cur=null,done=false,last=performance.now();
+ const keys=new Set(),KM={ArrowLeft:'l',KeyQ:'l',KeyA:'l',ArrowRight:'r',KeyD:'r',ArrowUp:'u',KeyW:'u',KeyZ:'u',ArrowDown:'d',KeyS:'d'};
+ const kd=e=>{const k=KM[e.code];if(k){keys.add(k);tx=null;e.preventDefault()}else if(e.code==='Space'||e.code==='Enter'||e.code==='KeyE'){e.preventDefault();go()}};
+ const ku=e=>{const k=KM[e.code];if(k)keys.delete(k)};
+ addEventListener('keydown',kd);addEventListener('keyup',ku);
+ function fin(v){if(done)return;done=true;removeEventListener('keydown',kd);removeEventListener('keyup',ku);cancelAnimationFrame(raf);closeArena();res(v)}
+ function go(){if(done||!cur)return;if(cur.no){inf.textContent=cur.why||cur.act;return}fin(cur.id)}
+ act.onclick=()=>{act.blur();go()};$('#cwb').onclick=()=>{fin(5)};
+ box.addEventListener('pointerdown',e=>{const r=box.getBoundingClientRect();tx=(e.clientX-r.left)/r.width*100;ty=(e.clientY-r.top)/r.height*100;ty=Math.max(34,Math.min(95,ty))});
+ let raf;
+ const place=(el,x,y,f,mv)=>{el.style.left=x+'%';el.style.top=y+'%';el.style.zIndex=Math.round(y);const s=el.querySelector('svg');if(s){s.style.transform=f<0?'scaleX(-1)':'';s.classList.toggle('run',mv)}};
+ function tick(now){if(done)return;raf=requestAnimationFrame(tick);const dt=Math.min(.05,(now-last)/1000);last=now;
+  const w=box.clientWidth||500,h=box.clientHeight||310,sp=150;let dx=0,dy=0;
+  if(keys.has('l'))dx-=1;if(keys.has('r'))dx+=1;if(keys.has('u'))dy-=1;if(keys.has('d'))dy+=1;
+  if(!dx&&!dy&&tx!=null){const ex=(tx-X)/100*w,ey=(ty-Y)/100*h,d=Math.hypot(ex,ey);if(d<6){tx=null}else{dx=ex/d;dy=ey/d}}
+  moving=!!(dx||dy);
+  if(moving){const m=Math.hypot(dx,dy);X+=dx/m*sp*dt/w*100;Y+=dy/m*sp*dt/h*100;X=Math.max(4,Math.min(96,X));Y=Math.max(34,Math.min(95,Y));if(dx)face=dx>0?1:-1}
+  place(me,X,Y,face,moving);
+  let best=null,bd=1e9;SP.forEach((s,i)=>{const d=Math.hypot((s.x-X)/100*w,(s.y+(s.f?0:6)-Y)/100*h);if(d<bd){bd=d;best=s}});
+  const near=bd<58?best:null;
+  if(near!==cur){cur=near;SP.forEach((s,i)=>{const e=$('#sp'+i);if(e)e.classList.toggle('on',s===cur)});
+   if(cur){act.disabled=!!cur.no&&!cur.why;act.textContent=(cur.no?'':'Espace · ')+cur.act;inf.textContent=cur.no&&cur.why?cur.why:''}
+   else{act.disabled=true;act.textContent='Approche-toi d\'un lieu…'}}
+  mates.forEach((m,i)=>{m.w-=dt;if(m.w<=0){m.w=2+Math.random()*4;if(Math.random()<.65){m.tx=fire&&Math.random()<.5?44+Math.random()*12:20+Math.random()*60;m.ty=fire&&Math.random()<.5?56+Math.random()*10:42+Math.random()*34}else{m.tx=0;m.ty=0}
+   if(Math.random()<.35){m.bub=2;const e=$('#m'+i);if(e){const o=e.querySelector('i');if(o)o.remove();e.insertAdjacentHTML('afterbegin',`<i>${pick(['😊','💬','🍌','🔥','🐟','💪','😴','👍'])}</i>`)}}}
+   if(m.bub>0){m.bub-=dt;if(m.bub<=0){const e=$('#m'+i);const o=e&&e.querySelector('i');if(o)o.remove()}}
+   let mv=false;if(m.tx){const ex=(m.tx-m.x)/100*w,ey=(m.ty-m.y)/100*h,d=Math.hypot(ex,ey);if(d>4){m.x+=ex/d*55*dt/w*100;m.y+=ey/d*55*dt/h*100;mv=true;m.f=ex>0?1:-1}else m.tx=0}
+   const e=$('#m'+i);if(e)place(e,m.x,m.y,m.f||1,mv)});
+ }
+ raf=requestAnimationFrame(tick)})}
+async function campChoice(p){
+ const c=camp(p),info={fire:!!c.fire,water:c.water,food:c.food,wood:c.wood,wi:WI[G.w]||'',mates:G.pl.filter(q=>q!==p&&q.alive&&camp(q)===c).map(q=>({name:q.name,col:q.col}))};
+ let i=null;
+ if(p.remote&&NET.on){const v=await remotePlay('camp',p,info);if(v!=null)i=Math.round(v/10)}
+ else if(!p.remote)i=await campWalk(p,info);
+ if(i==null)i=await ask('Quelle action ?',['🎣 Pêcher','💧 Collecter de l\'eau',c.fire?'🪵 Bois pour le feu':'🔥 Allumer le feu (éteint)','🌴 Fouiller l\'île','😴 Passer mon tour (aucun risque)','↩ Retour'],p);
+ return i}
 async function turn(p){
  G.cur=p;render();
  if(p.bot){if(p.hand.includes('bateau')&&p.hand.includes('scotch'))combine(p);
@@ -623,7 +744,7 @@ async function turn(p){
   const warn=p.sick!=null?(G.mode==='koh'?`<br>${SL(p)===2?'🤮 Tu es très malade':'🤒 Tu es malade'} : tes épreuves seront plus dures (−${Math.round((1-sickMult(p))*100)} %). Une 3e maladie de suite te rend inapte.`:'<br>🤒 Tu es malade : seul passer ton tour te soigne. Si tu agis et retombes malade, tu meurs.'):'';
   const r=await ask(`${esc(p.name)}, c'est ton tour ! Météo ${WI[G.w]}.${warn}<br><small>Prends ton temps : relis le journal, clique sur tes cartes pour les jouer, les montrer, les donner ou les échanger.</small>`,['▶ Jouer mon tour'],p,true);
   if(r.op){await cardOp(p,r.k,r.op);if(!p.alive)return;continue}
-  const i=await ask('Quelle action ?',['🎣 Pêcher','💧 Collecter de l\'eau'+(G.w===0&&G.mode!=='koh'?' (grand soleil : impossible)':''),G.mode==='koh'?(camp(p).fire?'🪵 Bois pour le feu':'🔥 Allumer le feu (éteint)'):'🪵 Collecter du bois',G.mode==='koh'?'🌴 Fouiller l\'île':'🧳 Fouiller l\'épave','😴 Passer mon tour (aucun risque)','↩ Retour'],p);
+  const i=G.mode==='koh'?await campChoice(p):await ask('Quelle action ?',['🎣 Pêcher','💧 Collecter de l\'eau'+(G.w===0&&G.mode!=='koh'?' (grand soleil : impossible)':''),G.mode==='koh'?(camp(p).fire?'🪵 Bois pour le feu':'🔥 Allumer le feu (éteint)'):'🪵 Collecter du bois',G.mode==='koh'?'🌴 Fouiller l\'île':'🧳 Fouiller l\'épave','😴 Passer mon tour (aucun risque)','↩ Retour'],p);
   if(i===5)continue;if(i===1&&G.w===0&&G.mode!=='koh'){log('☀️ Grand soleil : pas d\'eau aujourd\'hui, choisis autre chose.');continue}
   return act(p,i)}}
 
@@ -2353,6 +2474,37 @@ async function paresseuxKO(ps){
 const PREF={aveugle:ps=>aveuglePref(ps),parcours:ps=>raceGame('parcours',ps),course:ps=>raceGame('course',ps),chrono:ps=>sablierKO(ps),equilibre:equilibreKO,etoile:etoileKO,lestee:lesteeKO,arc3d:arcKO,koalas:ps=>teamGame(koalaTeam,ps),paresseux:paresseuxKO,memoire:ps=>isTeam(ps)?teamGame(memRelay,ps):null,paires:ps=>isTeam(ps)?teamGame(pairsRelay,ps):null,ronde:ps=>teamGame(rondeGame,ps),planche:ps=>teamGame(plancheGame,ps)};
 
 const botScore=p=>{let s=Math.round(Math.max(5,Math.min(98,(p.skill??.5)*100+(Math.random()-.5)*40)));return s};
+/* ---------- célébrations de victoire ---------- */
+const CELK=[
+ {k:'hug',t:'🤗 Câlin collectif !',min:2},
+ {k:'check',t:'🙌 Check général !',min:2},
+ {k:'jump',t:'🦘 Sauts de joie !',min:1},
+ {k:'ronde',t:'💃 La ronde de la victoire !',min:3},
+ {k:'ola',t:'🌊 La vague !',min:3},
+ {k:'pyr',t:'🔺 Pyramide humaine !',min:3},
+ {k:'toss',t:'🎈 On le lance en l\'air !',min:2}];
+function celebHTML(k,grp,crown){
+ const n=grp.length,W=(p,x,i,cls,ex)=>`<div class="cw ${ex||''}" style="--x:${x};--i:${i}${ex&&ex.includes('b:')?'':''}">${human(p.col,cls,p.name)}<b style="color:${p.col}">${crown&&i===0&&k!=='pyr'?'👑 ':''}${esc(p.name)}</b></div>`;
+ let h='';
+ if(k==='jump'||k==='ola'){const sp=Math.min(15,84/n);grp.forEach((p,i)=>{h+=W(p,50+(i-(n-1)/2)*sp,i,'cheer')})}
+ else if(k==='hug'){const sp=Math.min(15,70/n);grp.forEach((p,i)=>{const x=50+(i-(n-1)/2)*sp,dx=(50-x)*.8;h+=`<div class="cw" style="--x:${x};--i:${i};--dx:${dx.toFixed(1)}">${human(p.col,x<50?'hr':'hl',p.name)}<b style="color:${p.col}">${esc(p.name)}</b></div>`});h+='<span class="hrt" style="left:46%;bottom:100px">❤️</span><span class="hrt" style="left:54%;bottom:96px;animation-delay:.5s">💛</span><span class="hrt" style="left:50%;bottom:104px;animation-delay:1s">💚</span>'}
+ else if(k==='check'){const pr=Math.floor(n/2),cs=pr+(n%2);let idx=0;for(let j=0;j<cs;j++){const c=(j+.5)/cs*86+7;
+   if(j<pr){const a=grp[idx++],b=grp[idx++];h+=`<div class="cw" style="--x:${c-7};--i:${j};--dx:5">${human(a.col,'ckr',a.name)}<b style="color:${a.col}">${esc(a.name)}</b></div><div class="cw" style="--x:${c+7};--i:${j};--dx:-5">${human(b.col,'ckl',b.name)}<b style="color:${b.col}">${esc(b.name)}</b></div><span class="hand" style="left:${c-2}%;bottom:118px">✋</span>`}
+   else{const a=grp[idx++];h+=W(a,c,j,'cheer')}}}
+ else if(k==='ronde'){h='<div class="fire">🔥</div>';grp.forEach((p,i)=>{h+=`<div class="cw" style="--i:${i};--ph:${(4/n).toFixed(2)}"><div class="oy">${human(p.col,'cheer',p.name)}<b style="color:${p.col}">${esc(p.name)}</b></div></div>`})}
+ else if(k==='pyr'){const b=Math.ceil((n+1)/2),t=n-b;grp.slice(0,b).forEach((p,i)=>{h+=`<div class="cw" style="--x:${50+(i-(b-1)/2)*17};--i:${i}">${human(p.col,'',p.name)}<b style="color:${p.col}">${esc(p.name)}</b></div>`});
+   grp.slice(b).forEach((p,j)=>{h+=`<div class="cw top" style="--x:${50+(j-(t-1)/2)*17};--i:${j};--b:70px;transform:scale(.92)">${human(p.col,'cheer',p.name)}<b style="color:${p.col}">${esc(p.name)}</b></div>`});h+='<span class="hrt" style="left:50%;bottom:150px">🚩</span>'}
+ else if(k==='toss'){const m=grp[0],o=grp.slice(1);h=`<div class="cw mid" style="--x:50">${human(m.col,'cheer',m.name)}<b style="color:${m.col}">${crown?'👑 ':''}${esc(m.name)}</b></div>`;o.forEach((p,i)=>{const s=i%2?1:-1,x=50+s*(14+Math.floor(i/2)*14);h+=`<div class="cw sd" style="--x:${x};--i:${i}">${human(p.col,'cheer',p.name)}<b style="color:${p.col}">${esc(p.name)}</b></div>`})}
+ const cf=Array.from({length:9},(_,i)=>`<span class="cf" style="left:${(i*11+Math.random()*8)|0}%;animation-delay:${(-Math.random()*2.6).toFixed(2)}s">${['🎉','✨','🎊','⭐'][i%4]}</span>`).join('');
+ return cf+h}
+async function celebrate(entries,teams,indiv,winTeam,top){
+ if(G.fast||G.mute)return;
+ let grp=indiv?[top,...alive().filter(q=>q!==top).sort(()=>Math.random()-.5).slice(0,4)]:entries.filter(e=>e.win).map(e=>e.p);
+ grp=grp.filter(Boolean).slice(0,8);if(!grp.length)return;
+ const n=grp.length,opts=CELK.filter(c=>c.min<=n&&c.k!==G.lastCel),c=pick(opts.length?opts:CELK.filter(x=>x.min<=n));G.lastCel=c.k;
+ const who=indiv?esc(top.name):'La '+esc(TEAMS[winTeam].name);
+ const say=pick(['Yeaaah !','On a gagné !','Ensemble !','Quelle équipe !','C\'est pour nous !']);
+ await fx(`<div class="fxt">${who} ${indiv?'gagne':'gagne'} !</div><div class="cel ${c.k}"><div class="bub">${say}</div>${celebHTML(c.k,grp,indiv)}</div><p>${c.t}</p>`,4600)}
 async function resultsAnim(title,entries,teams){
  const lanes=entries.map(e=>`<div class="lane ${e.win?'win':''}"><div class="fig" data-l="${Math.min(84,e.score*.84)}%">${human(e.p.col,'run',e.p.name)}</div><span class="nm">${esc(e.p.name)} · ${e.score}${e.note?' <small>('+e.note+')</small>':''}</span></div>`).join('');
  const th=teams?'<div class="rc">'+teams.map(t=>`<div class="rb"><span>${esc(t.name)}</span><div class="meter"><i data-w="${Math.max(0,t.avg)}%" style="width:0;background:${t.col}"></i></div><b>${t.avg<0?'–':t.avg}</b></div>`).join('')+'</div>':'';
@@ -2377,7 +2529,7 @@ async function challenge0(kind,forceId){
   const srt=[...teams].sort((a,b)=>b.avg-a.avg||Math.random()-.5);winTeam=srt[0].t;loseTeam=srt[srt.length-1].t}
  const top=[...entries].sort((a,b)=>b.score-a.score)[0].p;
  entries.forEach(e=>{e.win=indiv?e.p===top:e.p.camp===winTeam});entries.filter(e=>e.win).forEach(e=>{e.p.wins=(e.p.wins||0)+1});if(G.mode==='koh')entries.filter(e=>e.win).forEach(e=>raiseForm(e.p));
- closeArena();await resultsAnim(`${ep.icon} ${ep.name}`,entries,teams);
+ closeArena();await resultsAnim(`${ep.icon} ${ep.name}`,entries,teams);await celebrate(entries,teams,indiv,winTeam,top);
  if(kind==='confort'&&!indiv&&teams&&teams.length>=3&&loseTeam!=null){G.exile=loseTeam;const ex=members(loseTeam),sk=[];ex.forEach(p=>{if(Math.random()<.4)sk.push(p)});
   log(`🏝️ La ${TEAMS[loseTeam].name} finit dernière : 24 h sur l'île des bannis, aucune action demain.`);
   await fx(`<div class="fxt">🏝️ Île des bannis</div>${hostSay(`La <b>${esc(TEAMS[loseTeam].name)}</b> termine dernière du confort ! Elle passe 24 h sur l'<b>île des bannis</b> : aucune pêche, aucune eau, aucun bois demain. Et l'isolement laisse des traces : <b>40 %</b> de risque pour chacun de tomber en baisse de forme.`)}<div class="line">${ex.map(p=>`<div class="who">${human(p.col,'sway',p.name)}${esc(p.name)}</div>`).join('')}</div>`,4200);
@@ -2902,7 +3054,7 @@ function netMirror(force){
  try{F.h1=$('#h1').textContent;F.bar=$('#bar').innerHTML;F.pls=$('#pls').innerHTML.replace(/<span class="ally"[^>]*>[^<]*<\/span>/g,'');F.last=$('#last').innerHTML;
   F.log=[...$('#log').children].slice(-40).map(e=>e.outerHTML).join('');
   const fx=$('#fx');F.fx=fx.classList.contains('on')?fx.innerHTML:'';
-  const ar=$('#arena');F.ar=ar.classList.contains('on')?(ar.querySelector('canvas')?NETWAIT:ar.innerHTML):'';
+  const ar=$('#arena');F.ar=ar.classList.contains('on')?(ar.querySelector('canvas,.campw')?NETWAIT:ar.innerHTML):'';
   F.md=(G.over&&!$('#modal').hidden)?$('#setup').innerHTML:'';
   const hd={};G.pl.forEach(p=>{if(p.remote&&p.peer)hd[p.peer]=p.alive?p.hand:null});F.hd=JSON.stringify(hd);
   if(G.mode==='koh'&&G.al){const al={};G.pl.forEach(p=>{if(p.remote&&p.peer)al[p.peer]=alInfo(p)});F.al=JSON.stringify(al)}
@@ -3030,6 +3182,7 @@ async function netLocal(id,me,d){
   const x=(d&&d.x)||{};
   const bots=['Léa','Max','Zoé'].map((n,i)=>({name:n,col:PALETTE[i+1],bot:true,skill:.4+Math.random()*.4}));
   LASTT=null;
+  if(id==='camp'){const I=Object.assign({},x);if(Array.isArray(I.mates))I.mates=I.mates.slice(0,5).map(m=>({name:NETN(m.name)||'?',col:/^#[0-9a-f]{3,8}$/i.test(m.col)?m.col:'#888'}));return (await campWalk(me,I))*10}
   if(id==='fire'){await arenaWait('<div class="fxt">🔥 Allume le feu !</div><p>Appuie sur la bonne touche au bon moment.</p>','Prêt ? Go ▶');return (await fireGame(me))?100:0}
   if(id==='course'||id==='parcours'||id==='chrono'){const ps=[me,...bots],m=id==='chrono'?await sablierKO(ps):await raceGame(id,ps);return m.get(me)}
   if(id==='arc3d'&&x.shots){const dd=await MG.arc3d(me,1,x.lab);return Math.max(0,Math.round(100-dd*55))}
@@ -3048,7 +3201,7 @@ async function netGuestPlay(d){
  NET.busy=true;let v;const fiv=setInterval(()=>netFrame(d.me&&d.me.name),66);
  try{const m=d.me,me={name:NETN(m.name)||'Moi',col:/^#[0-9a-f]{3,8}$/i.test(m.col)?m.col:'#2bb3a3',sk:m.sk,skill:+m.skill||.5,sick:m.sick,streak:m.streak|0,fit:!!m.fit,boost:!!m.boost,camp:m.camp|0,tribe:m.tribe|0,wins:m.wins|0,hand:[],st:{},alive:true,bot:false};
   const L=looksFor(S.mode);LOOK[me.name]=L[(m.lk|0)%L.length];
-  if(!EPR[d.g]&&!['fire','poteau','corde'].includes(d.g))throw new Error('?');
+  if(!EPR[d.g]&&!['fire','poteau','corde','camp'].includes(d.g))throw new Error('?');
   v=await netLocal(d.g,me,d)}catch(e){console.warn('play',e);v=50}
  NET.busy=false;clearInterval(fiv);netSend({k:'fr',end:1});v=Number.isFinite(v)?Math.max(0,Math.min(100,Math.round(v))):50;
  NET.done.set(d.id,v);netSend({k:'ans',id:d.id,v});netReapply()}
