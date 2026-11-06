@@ -1,0 +1,36 @@
+name: Recompiler le site
+
+# À chaque modification du code (source/), on teste, on recompile
+# et on copie le site à la racine du dépôt, servie par GitHub Pages.
+on:
+  push:
+    branches: [main]
+    paths: ['source/**']
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: source
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: source/package-lock.json
+      - run: npm ci
+      - run: npm test
+      - run: npm run publish:root
+      - name: Enregistrer le site compilé
+        working-directory: .
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html assets
+          git diff --cached --quiet || (git commit -m "Site recompilé automatiquement" && git push)

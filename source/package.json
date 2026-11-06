@@ -1,0 +1,34 @@
+{
+  "name": "naufrages",
+  "version": "1.0.0",
+  "description": "Naufragés : jeu de survie tour par tour (solo vs bots ou pass-and-play)",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "demo": "tsx scripts/demo.ts",
+    "sim": "tsx scripts/simulate.ts",
+    "publish:root": "npm run build && node scripts/publish-root.mjs"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "peerjs": "^1.5.4",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.10",
+    "@types/node": "^22.15.30",
+    "@types/react": "^18.3.23",
+    "@types/react-dom": "^18.3.7",
+    "@vitejs/plugin-react": "^4.5.2",
+    "tailwindcss": "^4.1.10",
+    "tsx": "^4.20.3",
+    "typescript": "^5.8.3",
+    "vite": "^6.3.5",
+    "vitest": "^3.2.4"
+  },
+  "type": "module"
+}
