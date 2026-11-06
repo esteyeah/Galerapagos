@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CARD_DEFS, type Card, type Command, type GameView } from '../../engine';
+import { CARD_DEFS, MAX_DISEASES, type Card, type Command, type GameView } from '../../engine';
+import { HealthPips, SickBadge } from './Health';
 
 type Mode = { cardId: string; kind: 'give' | 'trade' | 'soins' } | null;
 
@@ -35,6 +36,14 @@ export default function Hand({ view, send }: { view: GameView; send: (c: Command
       <h2 className="mb-1 font-display text-xl">
         🎒 Main de {me.name} <span className="text-sm font-normal text-slate-400">— cachée aux autres, sauf les cartes 👁️ montrées</span>
       </h2>
+      {me.alive && (
+        <div className={`mb-3 flex flex-wrap items-center gap-3 rounded-xl px-3 py-2 ${me.diseases >= MAX_DISEASES - 1 ? 'bg-rose-500/20' : me.diseases ? 'bg-lime-500/15' : 'bg-white/5'}`}>
+          <span className="text-sm font-semibold">Votre santé</span>
+          <HealthPips diseases={me.diseases} size="text-2xl" />
+          <SickBadge diseases={me.diseases} />
+          {me.diseases > 0 && <span className="text-xs text-slate-300">Se reposer ou une 💊 trousse de secours guérit une maladie.</span>}
+        </div>
+      )}
       {myTurn && <p className="mb-2 text-xs text-slate-400">Pendant votre tour : donner une carte est gratuit ; vous pouvez proposer jusqu'à {d.tradesLeft} échange(s).</p>}
       {me.visibleCards.length === 0 ? (
         <p className="text-sm text-slate-400">{me.alive ? "Vos poches sont vides. Fouillez l'épave pour trouver des objets." : 'Vous avez péri.'}</p>

@@ -44,7 +44,7 @@ export interface GameView {
   result: GameResult | null;
 }
 
-const LOG_LIMIT = 400;
+const LOG_LIMIT = 1500;
 
 export function buildView(engine: GameEngine, viewerId: number | null, revealAll = false): GameView {
   const d = engine.decision;

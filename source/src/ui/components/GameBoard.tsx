@@ -11,6 +11,7 @@ import EventLog from './EventLog';
 import GameOver from './GameOver';
 import RulesContent from './RulesContent';
 import { ActionSpotlight, DeathOverlay } from './Effects';
+import PlayerDetails from './PlayerDetails';
 
 export interface BotControls {
   speed: Speed;
@@ -38,6 +39,7 @@ export default function GameBoard({ view, send, error, settings, onSettings, onQ
   const [showRules, setShowRules] = useState(false);
   const [showResult, setShowResult] = useState(true);
   const [confirmQuit, setConfirmQuit] = useState(false);
+  const [selected, setSelected] = useState<number | null>(null);
   const fx = useFx(view.log);
   const activeId = view.decision.kind === 'gameover' ? null : view.decision.playerId;
 
@@ -77,7 +79,7 @@ export default function GameBoard({ view, send, error, settings, onSettings, onQ
 
       <div className="grid gap-4 lg:grid-cols-[1fr_380px]">
         <div className="flex min-w-0 flex-col gap-4">
-          <PlayerList view={view} activeId={activeId} presence={presence} bubbles={fx.bubbles} onReplaceWithBot={onReplaceWithBot} />
+          <PlayerList view={view} activeId={activeId} presence={presence} bubbles={fx.bubbles} onReplaceWithBot={onReplaceWithBot} onSelect={setSelected} />
           <DecisionPanel view={view} send={send} paused={controls?.paused} />
           {error && <div className="animate-pop rounded-xl border border-rose-400/40 bg-rose-500/15 px-4 py-2 text-rose-200">⚠️ {error}</div>}
           {!hideHand && <Hand view={view} send={send} />}
@@ -88,6 +90,8 @@ export default function GameBoard({ view, send, error, settings, onSettings, onQ
       <ActionSpotlight entry={fx.spot} view={view} />
       <DeathOverlay entry={fx.death} view={view} onDone={fx.dismissDeath} />
       {view.result && showResult && !fx.death && <GameOver view={view} onClose={() => setShowResult(false)} onQuit={onQuit} />}
+
+      {selected !== null && <PlayerDetails view={view} playerId={selected} onClose={() => setSelected(null)} />}
 
       {showRules && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4" onClick={() => setShowRules(false)}>
