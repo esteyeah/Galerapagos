@@ -6,6 +6,7 @@ Construisez le radeau, remplissez les réserves d'eau et de nourriture, et quitt
 - **Hors ligne** : solo contre des bots, ou pass-and-play sur un même appareil.
 - **En ligne** : un joueur crée un salon (code de 5 lettres), les autres le rejoignent depuis leur navigateur. Des bots peuvent compléter la partie, chacun avec son caractère (coopératif, égoïste, paranoïaque).
 - **Modes** : avec météo et ouragan, ou sans météo (fin uniquement par l'évasion ou la mort de tous). Trois difficultés : facile, normal, difficile.
+- **Mode Koh Lanta** (4 à 16 joueurs, 1 à 4 équipes) : cycle confort / immunité / conseil, épreuves en 3D où tout le monde joue en même temps (bots compris), feu à allumer, forme, réunification, finale (orientation, poteaux) et jury.
 - Une histoire d'introduction différente à chaque partie, musique et bruitages générés dans le navigateur.
 
 ## Lancer en local
@@ -15,7 +16,8 @@ npm install
 npm run dev        # http://localhost:5173
 npm test           # tests du moteur
 npm run demo -- 7 normal meteo         # partie de bots dans la console
-npm run sim -- 300 5 normal meteo      # statistiques d'équilibrage
+npm run sim -- 300 5 normal meteo      # statistiques d'équilibrage (survie)
+npx tsx scripts/sim-kl.ts 200 12 2     # statistiques Koh Lanta (parties, joueurs, équipes)
 npm run build      # site statique dans dist/
 ```
 
@@ -39,7 +41,9 @@ Limite connue : certains réseaux très fermés (entreprise, certains réseaux m
 
 ```
 src/engine/   Moteur pur (sans interface) : GameEngine, Player, Deck, VoteSystem, cartes, bots, vue filtrée
+src/engine/kohlanta/  Moteur du mode Koh Lanta : KohLantaEngine, épreuves, objets, bots
 src/net/      Jeu en ligne : protocole, session hôte, session invité (PeerJS)
 src/ui/       React + Tailwind : menu, intro, plateau, animations, audio
+src/ui/kl/    Koh Lanta : scènes 3D (Three.js), personnages, mini-jeux, camp, conseil
 scripts/      Démo console et simulateur d'équilibrage
 ```

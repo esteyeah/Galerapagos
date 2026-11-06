@@ -10,10 +10,13 @@ export interface AppSettings {
   music: boolean;
   sfx: boolean;
   playerName: string;
+  klTeams: number;
+  klWeather: boolean;
+  skin: number;
 }
 
 const KEY = 'naufrages.settings';
-const DEFAULTS: AppSettings = { mode: 'classique', difficulty: 'normal', weather: true, music: true, sfx: true, playerName: 'Capitaine' };
+const DEFAULTS: AppSettings = { mode: 'classique', difficulty: 'normal', weather: true, music: true, sfx: true, playerName: 'Capitaine', klTeams: 2, klWeather: true, skin: 0 };
 
 export function loadSettings(): AppSettings {
   try {

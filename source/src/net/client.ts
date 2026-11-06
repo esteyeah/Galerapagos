@@ -1,5 +1,6 @@
 import Peer, { type DataConnection } from 'peerjs';
 import type { Command, GameView } from '../engine';
+import type { ChallengeState, KLCommand, KLView } from '../engine/kohlanta';
 import { type ClientMsg, type HostMsg, type LobbyState, PEER_PREFIX, PING_INTERVAL, peerOptions } from './protocol';
 
 export type ClientStatus = 'connecting' | 'connected' | 'reconnecting' | 'closed';
@@ -11,7 +12,8 @@ export class ClientSession {
   status: ClientStatus = 'connecting';
   seat: number | null = null;
   lobby: LobbyState | null = null;
-  view: GameView | null = null;
+  view: GameView | KLView | null = null;
+  challenge: Extract<HostMsg, { t: 'ch' }> | null = null;
   error: string | null = null;
   closedReason: string | null = null;
   private conn: DataConnection | null = null;
@@ -23,6 +25,7 @@ export class ClientSession {
   constructor(
     readonly code: string,
     private name: string,
+    private skin = 0,
     private peer: Peer = new Peer(peerOptions()),
   ) {
     peer.on('open', () => this.connect());
@@ -60,7 +63,7 @@ export class ClientSession {
       } catch {
         /* ignore */
       }
-      this.sendRaw({ t: 'hello', name: this.name, token });
+      this.sendRaw({ t: 'hello', name: this.name, token, skin: this.skin });
     });
     conn.on('data', (raw) => this.onMessage(raw as HostMsg));
     conn.on('close', () => {
@@ -99,6 +102,10 @@ export class ClientSession {
         break;
       case 'view':
         this.view = msg.view;
+        if ('mode' in msg.view && msg.view.decision.kind !== 'challenge') this.challenge = null;
+        break;
+      case 'ch':
+        this.challenge = msg;
         break;
       case 'error':
         this.error = msg.message;
@@ -110,7 +117,16 @@ export class ClientSession {
     this.emit();
   }
 
-  send(cmd: Command): void {
+  setSkin(skin: number): void {
+    this.skin = skin;
+    this.sendRaw({ t: 'skin', skin });
+  }
+
+  sendChallengeState(seed: number, state: ChallengeState): void {
+    this.sendRaw({ t: 'ch-state', seed, state });
+  }
+
+  send(cmd: Command | KLCommand): void {
     this.error = null;
     this.sendRaw({ t: 'cmd', cmd });
   }

@@ -108,17 +108,55 @@ export const INTROS: IntroStory[] = [
   },
 ];
 
+/** Histoires d'arrivée pour le mode Koh Lanta. */
+export const KL_INTROS: IntroStory[] = [
+  {
+    id: 100,
+    title: 'Le grand départ',
+    icon: '🚤',
+    paragraphs: [
+      "Les bateaux ralentissent à quelques centaines de mètres d'une plage immaculée. Le capitaine coupe les moteurs : « À partir d'ici, c'est à la nage. »",
+      "Chacun saute avec son maigre sac étanche. L'eau est chaude, le courant traître, et les premières alliances se nouent déjà dans les vagues.",
+      "Sur le sable, un drapeau de couleur attend chaque équipe, avec une machette, une marmite et quelques poignées de riz.",
+      "Les épreuves commencent demain. Le premier conseil, dans trois jours. Que l'aventure commence !",
+    ],
+  },
+  {
+    id: 101,
+    title: "L'île aux totems",
+    icon: '🗿',
+    paragraphs: [
+      "On raconte que les anciens habitants de l'île y sculptaient des totems pour honorer ceux qui survivaient à la saison des pluies.",
+      "Cette année, ce sont des aventuriers venus de partout qui débarquent, sans nourriture, sans abri, sans feu.",
+      "Au centre de l'île, un vieux totem semble les observer. Quelque part dans la jungle, un collier d'immunité serait caché.",
+      "Seul un aventurier repartira avec le titre. Les autres verront leur flamme s'éteindre au conseil.",
+    ],
+  },
+  {
+    id: 102,
+    title: 'Parachutés au bout du monde',
+    icon: '🪂',
+    paragraphs: [
+      "L'hélicoptère survole l'archipel pendant de longues minutes avant de se stabiliser au-dessus d'une baie turquoise.",
+      "« Sautez ! » Un par un, les aventuriers plongent dans le lagon et nagent jusqu'à la rive, où les attend la première surprise : leurs équipes sont déjà formées.",
+      "Il faudra construire un abri, allumer un feu, pêcher, et surtout s'entendre… jusqu'à la réunification.",
+      "Car tôt ou tard, il n'y aura plus d'équipes. Seulement des individus, et un jury qui se souviendra de tout.",
+    ],
+  },
+];
+
 const LAST_KEY = 'naufrages.lastIntro';
 
 /** Tire une histoire différente de la précédente. */
-export function pickIntroId(): number {
+export function pickIntroId(mode: 'classique' | 'kohlanta' = 'classique'): number {
+  const pool = mode === 'kohlanta' ? KL_INTROS : INTROS;
   let last = -1;
   try {
     last = Number(localStorage.getItem(LAST_KEY) ?? -1);
   } catch {
     /* ignore */
   }
-  const choices = INTROS.filter((s) => s.id !== last);
+  const choices = pool.filter((s) => s.id !== last);
   const id = choices[Math.floor(Math.random() * choices.length)].id;
   try {
     localStorage.setItem(LAST_KEY, String(id));

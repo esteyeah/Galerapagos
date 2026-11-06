@@ -1,6 +1,18 @@
 import Peer, { type DataConnection } from 'peerjs';
-import { GameEngine, GameError, buildView, type Command, type Difficulty, type Personality } from '../engine';
-import { type ClientMsg, type HostMsg, type LobbyState, MAX_SEATS, OFFLINE_AFTER, PEER_PREFIX, PING_INTERVAL, peerOptions, randomCode, randomToken } from './protocol';
+import { GameEngine, GameError, buildView, type Command, type Personality } from '../engine';
+import { KohLantaEngine, buildKLView, type ChallengeState, type KLCommand } from '../engine/kohlanta';
+import {
+  type ClientMsg,
+  type HostMsg,
+  type LobbyState,
+  OFFLINE_AFTER,
+  PEER_PREFIX,
+  PING_INTERVAL,
+  maxSeats,
+  peerOptions,
+  randomCode,
+  randomToken,
+} from './protocol';
 
 interface Remote {
   token: string;
@@ -14,24 +26,24 @@ interface Remote {
  * et envoie à chaque joueur distant une vue filtrée de la partie.
  */
 export class HostSession {
-  engine: GameEngine | null = null;
+  engine: GameEngine | KohLantaEngine | null = null;
   lobby: LobbyState;
   error: string | null = null;
+  /** États envoyés par les joueurs distants pendant une épreuve Koh Lanta. */
+  readonly remoteChallenge = new Map<number, { seed: number; state: ChallengeState }>();
   private remotes: Remote[] = [];
   private listeners = new Set<() => void>();
   private unsubscribeEngine: (() => void) | null = null;
   private watchdog: number;
 
-  private constructor(private peer: Peer, code: string, hostName: string, settings: LobbyState['settings']) {
-    this.lobby = { code, seats: [{ seat: 0, name: hostName, kind: 'host', connected: true }], settings, started: false, introId: null };
+  private constructor(private peer: Peer, code: string, hostName: string, hostSkin: number, settings: LobbyState['settings']) {
+    this.lobby = { code, seats: [{ seat: 0, name: hostName, kind: 'host', connected: true, skin: hostSkin }], settings, started: false, introId: null };
     peer.on('connection', (conn) => this.onConnection(conn));
-    // Un joueur silencieux depuis trop longtemps est considéré comme déconnecté
     this.watchdog = window.setInterval(() => {
       const now = Date.now();
       for (const r of this.remotes) if (r.conn && now - r.lastSeen > OFFLINE_AFTER) this.onClose(r.conn);
     }, PING_INTERVAL);
     peer.on('disconnected', () => {
-      // perte du serveur de signalisation : les connexions existantes restent actives
       if (!peer.destroyed) peer.reconnect();
     });
     peer.on('error', (err) => {
@@ -40,14 +52,13 @@ export class HostSession {
     });
   }
 
-  /** Crée un salon avec un code libre. */
-  static create(hostName: string, settings: LobbyState['settings']): Promise<HostSession> {
+  static create(hostName: string, hostSkin: number, settings: LobbyState['settings']): Promise<HostSession> {
     return new Promise((resolve, reject) => {
       let attempts = 0;
       const tryOpen = () => {
         const code = randomCode();
         const peer = new Peer(PEER_PREFIX + code, peerOptions());
-        peer.once('open', () => resolve(new HostSession(peer, code, hostName, settings)));
+        peer.once('open', () => resolve(new HostSession(peer, code, hostName, hostSkin, settings)));
         peer.once('error', (err) => {
           peer.destroy();
           if ((err as { type?: string }).type === 'unavailable-id' && ++attempts < 5) tryOpen();
@@ -56,6 +67,10 @@ export class HostSession {
       };
       tryOpen();
     });
+  }
+
+  get isKL(): boolean {
+    return this.engine instanceof KohLantaEngine;
   }
 
   subscribe(fn: () => void): () => void {
@@ -70,8 +85,15 @@ export class HostSession {
   // ─────────────── Salon ───────────────
 
   addBot(name: string, personality: Personality | 'random'): void {
-    if (this.lobby.started || this.lobby.seats.length >= MAX_SEATS) return;
-    this.lobby.seats.push({ seat: this.lobby.seats.length, name, kind: 'bot', personality, connected: true });
+    if (this.lobby.started || this.lobby.seats.length >= maxSeats(this.lobby.settings.mode)) return;
+    const seat = this.lobby.seats.length;
+    this.lobby.seats.push({ seat, name, kind: 'bot', personality, connected: true, skin: (seat * 3) % 10 });
+    this.syncLobby();
+  }
+
+  setSkin(seat: number, skin: number): void {
+    if (this.lobby.started || !this.lobby.seats[seat]) return;
+    this.lobby.seats[seat].skin = skin;
     this.syncLobby();
   }
 
@@ -83,7 +105,8 @@ export class HostSession {
       const r = this.remotes.find((x) => x.seat === seat);
       if (r?.conn) {
         this.send(r.conn, { t: 'closed', reason: "L'hôte vous a retiré du salon." });
-        setTimeout(() => r.conn?.close(), 300);
+        const c = r.conn;
+        setTimeout(() => c.close(), 300);
       }
       this.remotes = this.remotes.filter((x) => x !== r);
     }
@@ -97,16 +120,26 @@ export class HostSession {
   setSettings(settings: Partial<LobbyState['settings']>): void {
     if (this.lobby.started) return;
     this.lobby.settings = { ...this.lobby.settings, ...settings };
+    // en passant en mode survie, on retire les places en trop (bots d'abord)
+    while (this.lobby.seats.length > maxSeats(this.lobby.settings.mode)) {
+      const bot = [...this.lobby.seats].reverse().find((s) => s.kind === 'bot');
+      if (!bot) break;
+      this.removeSeat(bot.seat);
+    }
     this.syncLobby();
   }
 
   start(introId: number): void {
     if (this.lobby.started) return;
-    if (this.lobby.seats.length < 3) throw new GameError('Il faut au moins 3 naufragés (ajoutez des bots).');
-    this.engine = new GameEngine(
-      this.lobby.seats.map((s) => ({ name: s.name, isBot: s.kind === 'bot', personality: s.personality === 'random' ? undefined : s.personality })),
-      { settings: this.lobby.settings },
-    );
+    const st = this.lobby.settings;
+    const min = st.mode === 'kohlanta' ? 4 : 3;
+    if (this.lobby.seats.length < min) throw new GameError(`Il faut au moins ${min} joueurs (ajoutez des bots).`);
+    if (this.lobby.seats.length > maxSeats(st.mode)) throw new GameError('Trop de joueurs pour ce mode.');
+    const configs = this.lobby.seats.map((s) => ({ name: s.name, isBot: s.kind === 'bot', skin: s.skin, personality: s.personality === 'random' ? undefined : s.personality }));
+    this.engine =
+      st.mode === 'kohlanta'
+        ? new KohLantaEngine(configs, { teams: st.klTeams, weather: st.klWeather, difficulty: st.difficulty })
+        : new GameEngine(configs, { settings: { difficulty: st.difficulty, weather: st.weather } });
     this.lobby.started = true;
     this.lobby.introId = introId;
     this.unsubscribeEngine = this.engine.subscribe(() => this.broadcastViews());
@@ -115,16 +148,22 @@ export class HostSession {
   }
 
   /** Commande jouée localement par l'hôte ou par un bot. */
-  dispatch(cmd: Command): void {
-    this.engine?.dispatch(cmd);
+  dispatch(cmd: Command | KLCommand): void {
+    if (!this.engine) return;
+    if (this.engine instanceof KohLantaEngine) this.engine.dispatch(cmd as KLCommand);
+    else this.engine.dispatch(cmd as Command);
   }
 
-  /** Un joueur déconnecté est remplacé par un bot (ou repris par lui à son retour). */
   replaceWithBot(seat: number): void {
     if (!this.engine) return;
     this.engine.setBot(seat, true);
     this.lobby.seats[seat].kind = 'bot';
     this.syncLobby();
+  }
+
+  /** Diffuse l'état en direct d'une épreuve (Koh Lanta) à tous les invités. */
+  broadcastChallenge(msg: Extract<HostMsg, { t: 'ch' }>): void {
+    for (const r of this.remotes) if (r.conn) this.send(r.conn, msg);
   }
 
   close(): void {
@@ -150,8 +189,8 @@ export class HostSession {
         known.lastSeen = Date.now();
         const seat = this.lobby.seats[known.seat];
         seat.connected = true;
-        if (this.engine && seat.kind === 'bot' && this.engine.players[known.seat].alive) {
-          // retour d'un joueur remplacé par un bot : il reprend la main
+        const p = this.engine?.players[known.seat];
+        if (this.engine && seat.kind === 'bot' && p?.alive) {
           seat.kind = 'remote';
           this.engine.setBot(known.seat, false);
         }
@@ -164,7 +203,7 @@ export class HostSession {
         this.send(conn, { t: 'closed', reason: 'La partie a déjà commencé.' });
         return;
       }
-      if (this.lobby.seats.length >= MAX_SEATS) {
+      if (this.lobby.seats.length >= maxSeats(this.lobby.settings.mode)) {
         this.send(conn, { t: 'closed', reason: 'Le salon est complet.' });
         return;
       }
@@ -172,7 +211,7 @@ export class HostSession {
       const seat = this.lobby.seats.length;
       const remote: Remote = { token: randomToken(), seat, conn, lastSeen: Date.now() };
       this.remotes.push(remote);
-      this.lobby.seats.push({ seat, name, kind: 'remote', connected: true });
+      this.lobby.seats.push({ seat, name, kind: 'remote', connected: true, skin: msg.skin ?? seat % 10 });
       this.send(conn, { t: 'welcome', seat, token: remote.token });
       this.syncLobby();
       return;
@@ -180,16 +219,25 @@ export class HostSession {
     const remote = this.remotes.find((r) => r.conn === conn);
     if (!remote) return;
     remote.lastSeen = Date.now();
-    if (msg.t === 'ping') return;
-    if (msg.t === 'cmd' && this.engine) {
-      if (this.lobby.seats[remote.seat]?.kind !== 'remote') return;
-      try {
-        this.engine.dispatch({ ...msg.cmd, playerId: remote.seat } as Command);
-      } catch (e) {
-        this.send(conn, { t: 'error', message: (e as Error).message });
-      }
-    } else if (msg.t === 'leave') {
-      this.onClose(conn);
+    switch (msg.t) {
+      case 'ping':
+        return;
+      case 'skin':
+        this.setSkin(remote.seat, msg.skin);
+        return;
+      case 'ch-state':
+        this.remoteChallenge.set(remote.seat, { seed: msg.seed, state: msg.state });
+        return;
+      case 'leave':
+        this.onClose(conn);
+        return;
+      case 'cmd':
+        if (!this.engine || this.lobby.seats[remote.seat]?.kind !== 'remote') return;
+        try {
+          this.dispatch({ ...msg.cmd, playerId: remote.seat } as Command | KLCommand);
+        } catch (e) {
+          this.send(conn, { t: 'error', message: (e as Error).message });
+        }
     }
   }
 
@@ -232,10 +280,12 @@ export class HostSession {
   }
 
   private broadcastViews(): void {
-    if (!this.engine) return;
-    for (const r of this.remotes) if (r.conn) this.send(r.conn, { t: 'view', view: buildView(this.engine, r.seat) });
+    const engine = this.engine;
+    if (!engine) return;
+    for (const r of this.remotes) {
+      if (!r.conn) continue;
+      this.send(r.conn, { t: 'view', view: engine instanceof KohLantaEngine ? buildKLView(engine, r.seat) : buildView(engine, r.seat) });
+    }
     this.emit();
   }
 }
-
-export type { Difficulty };

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { INTROS } from '../intros';
+import { INTROS, KL_INTROS } from '../intros';
 
 export default function IntroScreen({ introId, onDone, waitingLabel }: { introId: number; onDone: () => void; waitingLabel?: string }) {
-  const story = INTROS.find((s) => s.id === introId) ?? INTROS[0];
+  const story = [...INTROS, ...KL_INTROS].find((s) => s.id === introId) ?? INTROS[0];
   const [shown, setShown] = useState(1);
   useEffect(() => {
     if (shown >= story.paragraphs.length) return;

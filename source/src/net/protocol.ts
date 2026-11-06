@@ -1,4 +1,7 @@
 import type { Command, Difficulty, GameView, Personality } from '../engine';
+import type { ChallengeState, KLCommand, KLView } from '../engine/kohlanta';
+
+export type OnlineMode = 'classique' | 'kohlanta';
 
 export interface LobbySeat {
   seat: number;
@@ -6,12 +9,13 @@ export interface LobbySeat {
   kind: 'host' | 'remote' | 'bot';
   personality?: Personality | 'random';
   connected: boolean;
+  skin: number;
 }
 
 export interface LobbyState {
   code: string;
   seats: LobbySeat[];
-  settings: { difficulty: Difficulty; weather: boolean };
+  settings: { mode: OnlineMode; difficulty: Difficulty; weather: boolean; klTeams: number; klWeather: boolean };
   started: boolean;
   introId: number | null;
 }
@@ -19,17 +23,26 @@ export interface LobbyState {
 export type HostMsg =
   | { t: 'welcome'; seat: number; token: string }
   | { t: 'lobby'; lobby: LobbyState }
-  | { t: 'view'; view: GameView }
+  | { t: 'view'; view: GameView | KLView }
+  | { t: 'ch'; seed: number; step: 'ready' | 'countdown' | 'playing' | 'done'; elapsed: number; countdown: number; states: Record<number, ChallengeState>; timeScale: number }
   | { t: 'error'; message: string }
   | { t: 'closed'; reason: string };
 
-export type ClientMsg = { t: 'hello'; name: string; token?: string } | { t: 'cmd'; cmd: Command } | { t: 'leave' } | { t: 'ping' };
+export type ClientMsg =
+  | { t: 'hello'; name: string; token?: string; skin?: number }
+  | { t: 'cmd'; cmd: Command | KLCommand }
+  | { t: 'leave' }
+  | { t: 'ping' }
+  | { t: 'skin'; skin: number }
+  | { t: 'ch-state'; seed: number; state: ChallengeState };
 
 export const PING_INTERVAL = 3000;
 export const OFFLINE_AFTER = 10000;
 
 export const PEER_PREFIX = 'naufrages-v2-';
 export const MAX_SEATS = 8;
+export const KL_MAX_SEATS = 16;
+export const maxSeats = (mode: OnlineMode) => (mode === 'kohlanta' ? KL_MAX_SEATS : MAX_SEATS);
 
 const LETTERS = 'ABCDEFGHJKLMNPQRSTUVWXYZ';
 export function randomCode(): string {

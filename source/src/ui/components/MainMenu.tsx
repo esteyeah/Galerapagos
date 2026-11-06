@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { DIFFICULTY, type Difficulty } from '../../engine';
 import type { AppSettings } from '../settings';
 import RulesContent from './RulesContent';
+import RulesKL from './RulesKL';
 
 interface Props {
   settings: AppSettings;
@@ -50,13 +51,34 @@ export default function MainMenu({ settings, onSettings, onLocal, onHost, onJoin
             <div className="font-semibold">🛶 Survie classique</div>
             <div className="text-sm text-slate-400">Tous ensemble pour fuir l'île… tant que les vivres suffisent.</div>
           </button>
-          <div className="cursor-not-allowed rounded-xl border border-dashed border-white/15 bg-white/[0.02] p-3 text-left opacity-60">
-            <div className="font-semibold">
-              🔥 Koh Lanta <span className="ml-1 rounded bg-white/10 px-1.5 text-xs">bientôt</span>
-            </div>
-            <div className="text-sm text-slate-400">Épreuves, conseils et un seul gagnant. En préparation.</div>
-          </div>
+          <button
+            onClick={() => onSettings({ mode: 'kohlanta' })}
+            className={`rounded-xl border p-3 text-left ${settings.mode === 'kohlanta' ? 'border-orange-400/80 bg-orange-500/15' : 'border-white/10 bg-white/5'}`}
+          >
+            <div className="font-semibold">🔥 Koh Lanta <span className="ml-1 rounded bg-orange-500 px-1.5 text-xs text-white">nouveau</span></div>
+            <div className="text-sm text-slate-400">Épreuves en 3D, conseils, réunification, finale et jury. Un seul gagnant.</div>
+          </button>
         </div>
+
+        {settings.mode === 'kohlanta' && (
+          <div className="mt-4 grid gap-3 rounded-xl border border-orange-400/30 bg-orange-500/5 p-3 sm:grid-cols-2">
+            <div>
+              <div className="mb-1 text-sm font-semibold">Équipes</div>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4].map((n) => (
+                  <button key={n} onClick={() => onSettings({ klTeams: n })} className={`flex-1 rounded-lg px-2 py-1.5 text-sm ${settings.klTeams === n ? 'bg-amber-400 font-bold text-slate-900' : 'bg-white/5'}`}>
+                    {n === 1 ? 'Solo' : n}
+                  </button>
+                ))}
+              </div>
+              <div className="mt-1 text-xs text-slate-400">« Solo » : chacun pour soi.</div>
+            </div>
+            <Toggle icon="🌦️" label="Météo avec effet" on={settings.klWeather} onChange={(klWeather) => onSettings({ klWeather })} />
+            <p className="text-xs text-slate-400 sm:col-span-2">
+              Cycle de 3 jours : confort, immunité, puis conseil. Feu à allumer (mini-jeu), forme qui influence les récoltes et les épreuves, 3 maladies = abandon. Finale : orientation à 4, poteaux à 3, puis jury.
+            </p>
+          </div>
+        )}
 
         <h2 className="mb-2 mt-5 font-display text-xl text-amber-200">Difficulté</h2>
         <div className="grid gap-2 sm:grid-cols-3">
@@ -70,11 +92,11 @@ export default function MainMenu({ settings, onSettings, onLocal, onHost, onJoin
 
         <h2 className="mb-2 mt-5 font-display text-xl text-amber-200">Paramètres</h2>
         <div className="grid gap-2 sm:grid-cols-3">
-          <Toggle icon="🌦️" label="Météo & ouragan" on={settings.weather} onChange={(weather) => onSettings({ weather })} />
+          {settings.mode === 'classique' && <Toggle icon="🌦️" label="Météo & ouragan" on={settings.weather} onChange={(weather) => onSettings({ weather })} />}
           <Toggle icon="🎵" label="Musique" on={settings.music} onChange={(music) => onSettings({ music })} />
           <Toggle icon="🔊" label="Bruitages" on={settings.sfx} onChange={(sfx) => onSettings({ sfx })} />
         </div>
-        <p className="mt-2 text-xs text-slate-400">
+        <p className={`mt-2 text-xs text-slate-400 ${settings.mode === 'kohlanta' ? 'hidden' : ''}`}>
           {settings.weather
             ? "Avec météo : la pluie aide à recueillir l'eau, la sécheresse l'empêche, et l'ouragan met fin à la partie."
             : "Sans météo : pas d'ouragan. La partie ne s'arrête que par l'évasion… ou la mort de tous."}
@@ -101,7 +123,7 @@ export default function MainMenu({ settings, onSettings, onLocal, onHost, onJoin
       </div>
       {showRules && (
         <section className="panel animate-pop p-5">
-          <RulesContent />
+          {settings.mode === 'kohlanta' ? <RulesKL /> : <RulesContent />}
         </section>
       )}
     </div>
