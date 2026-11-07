@@ -28,6 +28,8 @@ export function chooseKLBotCommand(engine: KohLantaEngine, rng: Rng = Math.rando
       void me;
       return { type: 'finalChoice', playerId: d.playerId, targetId: target };
     }
+    case 'ambassador':
+      return botAmbassador(engine, d, rng);
     default:
       throw new Error('Pas de décision de bot pour cette phase.');
   }
@@ -109,6 +111,10 @@ function botVote(engine: KohLantaEngine, d: Extract<KLDecision, { kind: 'vote' }
   }
   const score = (t: KLPlayer): number => {
     let s = rng() * 2 + grudge(engine, me.id, t.id) * (me.personality === 'paranoiaque' ? 3 : 1.5);
+    if (d.reason === 'ambassador') {
+      // on envoie négocier un coéquipier solide (il risque le tirage au sort)
+      return t.forme + t.challengeWins * 1.5 + rng() * 3 - (me.personality === 'paranoiaque' ? grudge(engine, me.id, t.id) * -2 : 0);
+    }
     if (d.reason === 'jury') {
       // Le juré récompense les finalistes qui l'ont épargné et les grands champions (score inversé : on vote pour le plus haut)
       return -(s + t.challengeWins * 0.8 - grudge(engine, me.id, t.id) * 3);
@@ -125,4 +131,24 @@ function botVote(engine: KohLantaEngine, d: Extract<KLDecision, { kind: 'vote' }
   };
   const ranked = d.candidates.map((id) => ({ id, s: score(engine.player(id)) })).sort((a, b) => (d.reason === 'jury' ? a.s - b.s : b.s - a.s));
   return { type: 'vote', playerId: me.id, targetId: ranked[0].id };
+}
+
+const AGREE = { cooperatif: 0.75, egoiste: 0.45, paranoiaque: 0.55 } as const;
+
+/** Ambassadeur : se rallier à la proposition d'un autre… ou défendre ses anciens coéquipiers. */
+function botAmbassador(engine: KohLantaEngine, d: Extract<KLDecision, { kind: 'ambassador' }>, rng: Rng): KLCommand {
+  const me = engine.player(d.playerId);
+  const first = d.proposals[0];
+  if (first && d.candidates.includes(first.target)) {
+    const t = engine.player(first.target);
+    if (t.originalTeam !== me.originalTeam && rng() < AGREE[me.personality]) return { type: 'ambassador', playerId: me.id, targetId: t.id };
+  }
+  const rivals = d.candidates.filter((id) => engine.player(id).originalTeam !== me.originalTeam);
+  const pool = rivals.length ? rivals : d.candidates;
+  const threat = (id: number) => {
+    const p = engine.player(id);
+    return p.challengeWins * 1.5 + p.forme * 0.3 + grudge(engine, me.id, id) * 2 + rng() * 2;
+  };
+  const target = [...pool].sort((a, b) => threat(b) - threat(a))[0];
+  return { type: 'ambassador', playerId: me.id, targetId: target };
 }

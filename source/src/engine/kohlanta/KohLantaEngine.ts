@@ -42,12 +42,18 @@ export const SOLO_TEAM = { name: "L'île", color: '#a78bfa' };
 
 const START_FORME = { facile: 8, normal: 7, difficile: 6 } as const;
 const NO_FIRE_DISEASE_CHANCE = 0.12;
+/** Conseils surprises : au plus 2 par partie. */
+export const MAX_SURPRISE_COUNCILS = 2;
+const SURPRISE_CHANCE = 0.2;
+/** Épreuves éliminatoires : au plus 2 par partie. */
+export const MAX_ELIMINATION_CHALLENGES = 2;
+const ELIMINATION_CHANCE = 0.3;
 /** Bien nourri, désaltéré et au chaud : chance de guérir d'une maladie pendant la nuit. */
 const HEALING_NIGHT_CHANCE = 0.4;
 /** En forme (≥ ce seuil), une récolte réussie rapporte +1. */
 export const FIT_THRESHOLD = 6;
 
-type Phase = 'challenge' | 'action' | 'vote' | 'finalChoice' | 'gameover';
+type Phase = 'challenge' | 'action' | 'vote' | 'finalChoice' | 'ambassador' | 'gameover';
 
 export class KLError extends Error {}
 
@@ -104,6 +110,19 @@ export class KohLantaEngine {
   poteauxWinner: number | null = null;
   orientationDone = false;
   result: KLResult | null = null;
+  /** Destins liés : partenaire de chaque aventurier pendant le cycle en cours. */
+  readonly pairs = new Map<number, number>();
+  linkedActive = false;
+  linkedCount = 0;
+  surpriseCount = 0;
+  eliminationCount = 0;
+  /** Conseil en cours déclenché par surprise. */
+  surpriseCouncil = false;
+  /** Ambassadeurs élus à la réunification et leurs propositions. */
+  ambassadors: number[] = [];
+  ambassadorProposals: { from: number; target: number }[] = [];
+  private ambassadorQueue: number[] = [];
+  private confortLoserTeam: number | null = null;
 
   private readonly rng: Rng;
   private readonly itemDeck: Deck<KLItem>;
@@ -236,6 +255,13 @@ export class KohLantaEngine {
       }
       case 'finalChoice':
         return { kind: 'finalChoice', playerId: this.poteauxWinner!, options: this.alivePlayers.filter((p) => p.id !== this.poteauxWinner).map((p) => p.id) };
+      case 'ambassador':
+        return {
+          kind: 'ambassador',
+          playerId: this.ambassadors[this.qIdx],
+          proposals: [...this.ambassadorProposals],
+          candidates: this.alivePlayers.filter((p) => !this.ambassadors.includes(p.id)).map((p) => p.id),
+        };
     }
   }
 
@@ -276,6 +302,7 @@ export class KohLantaEngine {
     if (d.kind === 'action') this.handleAction(cmd);
     else if (d.kind === 'vote') this.handleVote(cmd);
     else if (d.kind === 'finalChoice') this.handleFinalChoice(cmd);
+    else if (d.kind === 'ambassador') this.handleAmbassador(cmd);
     this.emit();
   }
 
@@ -305,6 +332,7 @@ export class KohLantaEngine {
       });
       if (ch.kind === 'confort') {
         this.applyReward(ch.reward!, best.t.id, best.ids);
+        this.confortLoserTeam = teamScores[teamScores.length - 1].t.id;
       } else {
         const last = teamScores[teamScores.length - 1];
         this.councilTeam = last.t.id;
@@ -318,9 +346,23 @@ export class KohLantaEngine {
       if (ch.kind === 'confort') {
         this.addLog('info', `🏆 ${bp.name} remporte l'épreuve de confort !`, { fx: { kind: 'challenge', kind2: ch.kind, game: ch.game } });
         this.applyReward(ch.reward!, bp.team, [best]);
-      } else if (ch.kind === 'immunite') {
-        this.immune.add(best);
-        this.addLog('info', `📿 ${bp.name} remporte le collier d'immunité individuel !`, { fx: { kind: 'challenge', kind2: ch.kind, game: ch.game } });
+      } else if (ch.kind === 'immunite' || ch.kind === 'elimination') {
+        if (ch.linked) {
+          // destins liés : le meilleur binôme (rang moyen) est immunisé
+          const pairScore = (id: number) => {
+            const mate = this.pairs.get(id);
+            const ids = mate !== undefined && ch.participants.includes(mate) ? [id, mate] : [id];
+            return ids.reduce((sum, x) => sum + ranking.length - ranking.indexOf(x), 0) / ids.length;
+          };
+          const bestId = [...ch.participants].sort((a, b) => pairScore(b) - pairScore(a))[0];
+          const mate = this.pairs.get(bestId);
+          winners = mate !== undefined && this.player(mate).alive ? [bestId, mate] : [bestId];
+          for (const id of winners) this.immune.add(id);
+          this.addLog('info', `⛓️📿 Le binôme ${winners.map((id) => this.player(id).name).join(' & ')} remporte l'immunité !`, { fx: { kind: 'challenge', kind2: ch.kind, game: ch.game } });
+        } else {
+          this.immune.add(best);
+          this.addLog('info', `📿 ${bp.name} remporte le collier d'immunité individuel !`, { fx: { kind: 'challenge', kind2: ch.kind, game: ch.game } });
+        }
       } else if (ch.kind === 'orientation') {
         const loser = ranking[ranking.length - 1];
         this.addLog('info', `🧭 ${bp.name} remporte la course d'orientation. ${this.player(loser).name} termine à la dernière place…`, { fx: { kind: 'challenge', kind2: ch.kind, game: ch.game } });
@@ -331,14 +373,20 @@ export class KohLantaEngine {
         this.addLog('info', `🪵 ${bp.name} remporte les poteaux ! À ${bp.name} de choisir son adversaire pour la finale.`, { fx: { kind: 'challenge', kind2: ch.kind, game: ch.game } });
       }
     }
+    if (ch.kind === 'elimination') {
+      const loser = this.player(ranking[ranking.length - 1]);
+      this.addLog('death', `☠️ Épreuve éliminatoire : ${loser.name} termine à la dernière place et quitte l'aventure !`, { fx: { kind: 'eliminated', playerId: loser.id, how: "Dernière place à l'épreuve éliminatoire" } });
+      this.eliminate(loser, "Dernière place à l'épreuve éliminatoire", true);
+    }
     for (const id of winners) {
+      if (!this.player(id).alive) continue;
       this.changeForme(this.player(id), +2);
       this.player(id).challengeWins++;
     }
     this.lastChallengeResult = { game: ch.game, kind: ch.kind, ranking, winners };
     this.challenge = null;
 
-    if (ch.kind === 'confort' || ch.kind === 'immunite') this.startCamp();
+    if (ch.kind === 'confort' || ch.kind === 'immunite' || ch.kind === 'elimination') this.startCamp();
     else if (ch.kind === 'orientation') this.startDay();
     else this.phase = 'finalChoice';
     this.emit();
@@ -546,7 +594,16 @@ export class KohLantaEngine {
       this.weatherDeck.discard(w);
       this.weather = w;
     }
-    this.checkMerge();
+    const teamsBefore = new Set(this.alivePlayers.map((p) => p.team)).size;
+    if (this.checkMerge() && teamsBefore > 1 && this.alivePlayers.length >= 6) {
+      this.startAmbassadors();
+      return;
+    }
+    this.continueDay();
+  }
+
+  /** Suite de la journée (après une éventuelle réunification et ses ambassadeurs). */
+  private continueDay(): void {
     const alive = this.alivePlayers.length;
     const weatherText = this.weather && this.settings.weather ? ` — ${this.weather.label}` : '';
     if (alive <= 1) {
@@ -574,20 +631,99 @@ export class KohLantaEngine {
     if (pos === 1) {
       this.immune.clear();
       this.councilTeam = null;
+      this.confortLoserTeam = null;
+      this.maybeLinkFates();
       this.startChallenge('confort');
     } else if (pos === 2) {
-      this.startChallenge('immunite');
+      const eliminatory = this.eliminationCount < MAX_ELIMINATION_CHALLENGES && alive >= 6 && this.cycleDay > 3 && this.rng() < ELIMINATION_CHANCE;
+      if (eliminatory) this.eliminationCount++;
+      this.startChallenge(eliminatory ? 'elimination' : 'immunite');
     } else {
       this.startCamp();
     }
   }
 
-  private checkMerge(): void {
-    if (this.merged) return;
+  /** Destins liés : des binômes tirés au sort pour tout un cycle (1 par partie, 2 à partir de 12 joueurs). */
+  private maybeLinkFates(): void {
+    const max = this.startCount >= 12 ? 2 : 1;
+    const alive = this.alivePlayers;
+    if (this.linkedCount >= max || alive.length < 8 || this.cycleDay <= 3 || this.rng() > 0.5) return;
+    this.pairs.clear();
+    const byTeam = new Map<number, number[]>();
+    for (const p of alive) byTeam.set(p.team, [...(byTeam.get(p.team) ?? []), p.id]);
+    const lines: string[] = [];
+    for (const ids of byTeam.values()) {
+      shuffle(this.rng, ids);
+      for (let i = 0; i + 1 < ids.length; i += 2) {
+        this.pairs.set(ids[i], ids[i + 1]);
+        this.pairs.set(ids[i + 1], ids[i]);
+        lines.push(`${this.player(ids[i]).name} & ${this.player(ids[i + 1]).name}`);
+      }
+      if (ids.length % 2) lines.push(`${this.player(ids[ids.length - 1]).name} (seul·e)`);
+    }
+    this.linkedActive = true;
+    this.linkedCount++;
+    this.addLog('info', `⛓️ DESTINS LIÉS ! Jusqu'au prochain conseil, les binômes sont inséparables : ${lines.join(', ')}. Si l'un est éliminé au conseil, l'autre part aussi.`, { fx: { kind: 'linked' } });
+  }
+
+  /** Réunification : chaque ancienne équipe élit son ambassadeur. */
+  private startAmbassadors(): void {
+    this.ambassadors = [];
+    this.ambassadorProposals = [];
+    this.ambassadorQueue = [...new Set(this.alivePlayers.map((p) => p.originalTeam))];
+    this.addLog('info', `🤝 Avant de vivre ensemble, chaque ancienne équipe désigne un ambassadeur. Les ambassadeurs devront s'accorder sur un nom à éliminer… sinon le sort tranchera entre eux !`, { fx: { kind: 'ambassadors' } });
+    this.electNextAmbassador();
+  }
+
+  private electNextAmbassador(): void {
+    while (this.ambassadorQueue.length) {
+      const teamId = this.ambassadorQueue.shift()!;
+      const members = this.alivePlayers.filter((p) => p.originalTeam === teamId).map((p) => p.id);
+      if (members.length === 0) continue;
+      this.voteTeam = teamId;
+      this.voteReason = 'ambassador';
+      if (members.length === 1) {
+        this.onDesignated(members[0], null);
+        return;
+      }
+      this.addLog('vote', `🗳️ ${TEAM_PRESETS[teamId]?.name ?? 'Équipe'} : qui sera votre ambassadeur ?`);
+      this.startVote(members, members);
+      return;
+    }
+    this.qIdx = 0;
+    this.phase = 'ambassador';
+    this.addLog('vote', `🤝 Les ambassadeurs ${this.ambassadors.map((id) => this.player(id).name).join(', ')} se retrouvent pour négocier.`);
+  }
+
+  private handleAmbassador(cmd: KLCommand): void {
+    if (cmd.type !== 'ambassador') throw new KLError('Proposez un nom.');
+    const d = this.decision;
+    if (d.kind !== 'ambassador' || !d.candidates.includes(cmd.targetId)) throw new KLError('Nom invalide.');
+    this.ambassadorProposals.push({ from: cmd.playerId, target: cmd.targetId });
+    this.addLog('vote', `🤝 ${this.player(cmd.playerId).name} propose d'éliminer ${this.player(cmd.targetId).name}.`);
+    this.qIdx++;
+    if (this.qIdx < this.ambassadors.length) return;
+    const targets = new Set(this.ambassadorProposals.map((x) => x.target));
+    if (targets.size === 1) {
+      const victim = this.player([...targets][0]);
+      this.addLog('death', `🤝 Les ambassadeurs sont d'accord : ${victim.name} quitte l'aventure.`, { fx: { kind: 'eliminated', playerId: victim.id, how: 'Désigné par les ambassadeurs' } });
+      this.eliminate(victim, 'Désigné par les ambassadeurs', true);
+    } else {
+      const victim = this.player(pick(this.rng, this.ambassadors));
+      this.addLog('death', `🎲 Pas d'accord entre les ambassadeurs ! Tirage au sort entre eux : ${victim.name} quitte l'aventure.`, { fx: { kind: 'eliminated', playerId: victim.id, how: 'Tiré au sort entre les ambassadeurs' } });
+      this.eliminate(victim, 'Tiré au sort entre les ambassadeurs', true);
+    }
+    this.ambassadors = [];
+    this.ambassadorProposals = [];
+    this.continueDay();
+  }
+
+  private checkMerge(): boolean {
+    if (this.merged) return false;
     const teamsAlive = this.teams.filter((t) => this.members(t.id).length > 0);
     const mergeAt = Math.max(5, Math.ceil(this.startCount / 2));
     const tooSmall = teamsAlive.some((t) => this.members(t.id).length <= 1);
-    if (this.alivePlayers.length > mergeAt && !tooSmall && teamsAlive.length > 1) return;
+    if (this.alivePlayers.length > mergeAt && !tooSmall && teamsAlive.length > 1) return false;
     const pooled: TeamState = { id: 0, name: MERGED_TEAM.name, color: MERGED_TEAM.color, water: 0, food: 0, wood: 0, fire: false };
     for (const t of this.teams) {
       pooled.water += t.water;
@@ -601,6 +737,7 @@ export class KohLantaEngine {
     this.immune.clear();
     this.councilTeam = null;
     this.addLog('info', `🤝 RÉUNIFICATION ! Les ${this.alivePlayers.length} aventuriers restants forment une seule tribu. Désormais, c'est chacun pour soi.`);
+    return true;
   }
 
   private startChallenge(kind: ChallengeKind): void {
@@ -612,7 +749,7 @@ export class KohLantaEngine {
       game = pick(this.rng, pool.length ? pool : REGULAR_CHALLENGES);
       this.lastGames = [game, ...this.lastGames].slice(0, 2);
     }
-    const teamMode = !this.merged && (kind === 'confort' || kind === 'immunite');
+    const teamMode = !this.merged && (kind === 'confort' || kind === 'immunite' || kind === 'elimination');
     const rewards = Object.keys(REWARDS) as RewardId[];
     this.challenge = {
       kind,
@@ -621,9 +758,11 @@ export class KohLantaEngine {
       teamMode,
       seed: Math.floor(this.rng() * 1e9),
       reward: kind === 'confort' ? pick(this.rng, rewards) : undefined,
+      linked: this.linkedActive && !teamMode && (kind === 'immunite' || kind === 'elimination') ? true : undefined,
     };
     const def = CHALLENGES[game];
-    this.addLog('info', `${def.emoji} Épreuve ${kind === 'confort' ? 'de confort' : kind === 'immunite' ? "d'immunité" : 'finale'} : ${def.name}${teamMode ? ' (par équipes)' : ''}.`, {
+    const label = { confort: 'de confort', immunite: "d'immunité", elimination: 'ÉLIMINATOIRE', orientation: 'finale', poteaux: 'finale' }[kind];
+    this.addLog('info', `${def.emoji} Épreuve ${label} : ${def.name}${teamMode ? ' (par équipes)' : ''}${kind === 'elimination' ? ' — le dernier quitte l’aventure !' : ''}.`, {
       fx: { kind: 'challenge', kind2: kind, game },
     });
     this.phase = 'challenge';
@@ -735,10 +874,25 @@ export class KohLantaEngine {
       this.deprivedSet(this.voteTeam, this.voteReason).add(victimId);
       this.addLog('vote', `${victim.name} se passera ${this.voteReason === 'water' ? "d'eau" : 'de nourriture'} cette nuit.`);
       this.resolveNeeds();
+    } else if (this.voteReason === 'ambassador') {
+      this.ambassadors.push(victimId);
+      this.addLog('vote', `🤝 ${victim.name} sera l'ambassadeur de ${TEAM_PRESETS[this.voteTeam]?.name ?? 'son équipe'}.`);
+      this.electNextAmbassador();
     } else if (this.voteReason === 'council') {
       this.necklaces.clear();
       this.addLog('death', `🔥 ${victim.name}, la tribu a parlé. Votre flamme s'éteint.`, { fx: { kind: 'eliminated', playerId: victim.id, how: 'Éliminé au conseil' } });
       this.eliminate(victim, 'Éliminé au conseil', true);
+      const mate = this.linkedActive ? this.pairs.get(victimId) : undefined;
+      if (mate !== undefined && this.player(mate).alive) {
+        const m = this.player(mate);
+        this.addLog('death', `⛓️ Destins liés : ${m.name} suit ${victim.name} et quitte aussi l'aventure !`, { fx: { kind: 'eliminated', playerId: m.id, how: `Destin lié à ${victim.name}` } });
+        this.eliminate(m, `Destin lié à ${victim.name}`, true);
+      }
+      if (!this.surpriseCouncil || this.cyclePosition === 3) {
+        this.linkedActive = false;
+        this.pairs.clear();
+      }
+      this.surpriseCouncil = false;
       this.startDay();
     } else {
       // jury final
@@ -788,7 +942,18 @@ export class KohLantaEngine {
       return;
     }
     if (this.cyclePosition === 3) this.startCouncil();
-    else this.startDay();
+    else if (this.shouldSurprise()) {
+      this.surpriseCount++;
+      this.surpriseCouncil = true;
+      if (!this.merged && this.cyclePosition === 1) this.councilTeam = this.confortLoserTeam;
+      this.addLog('vote', `⚡ CONSEIL SURPRISE ! Ce soir, quelqu'un va quitter l'aventure.`, { fx: { kind: 'surprise' } });
+      this.startCouncil();
+    } else this.startDay();
+  }
+
+  private shouldSurprise(): boolean {
+    const pos = this.cyclePosition;
+    return (pos === 1 || pos === 2) && !this.linkedActive && this.surpriseCount < MAX_SURPRISE_COUNCILS && this.alivePlayers.length >= 7 && this.cycleDay > 3 && this.rng() < SURPRISE_CHANCE;
   }
 
   private startCouncil(): void {
@@ -806,12 +971,13 @@ export class KohLantaEngine {
     }
     if (voters.length <= 1 || candidates.length === 0) {
       this.addLog('vote', 'Pas de conseil ce soir : trop peu de votants.');
+      this.surpriseCouncil = false;
       this.startDay();
       return;
     }
     this.voteReason = 'council';
     this.necklaces.clear();
-    this.addLog('vote', `🔥 Conseil ${this.merged ? 'de la tribu réunifiée' : `de ${this.team(this.voteTeam).name}`}. ${this.immune.size && this.merged ? `${[...this.immune].map((id) => this.player(id).name).join(', ')} a l'immunité.` : ''}`);
+    this.addLog('vote', `🔥 Conseil ${this.surpriseCouncil ? 'surprise ' : ''}${this.merged ? 'de la tribu réunifiée' : `de ${this.team(this.voteTeam).name}`}. ${this.immune.size && this.merged ? `${[...this.immune].map((id) => this.player(id).name).join(', ')} a l'immunité.` : ''}`);
     this.startVote(voters, candidates);
   }
 

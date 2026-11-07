@@ -32,7 +32,7 @@ interface Props {
   hideHand?: boolean;
 }
 
-const VOTE_TITLE = { water: "💧 Qui se passera d'eau ?", food: '🍽️ Qui se passera de nourriture ?', council: '🔥 Conseil : qui doit partir ?', jury: '⚖️ Jury final : qui mérite de gagner ?' } as const;
+const VOTE_TITLE = { water: "💧 Qui se passera d'eau ?", food: '🍽️ Qui se passera de nourriture ?', council: '🔥 Conseil : qui doit partir ?', jury: '⚖️ Jury final : qui mérite de gagner ?', ambassador: '🤝 Qui sera votre ambassadeur ?' } as const;
 
 function FormeBar({ forme }: { forme: number }) {
   const pct = forme / MAX_FORME;
@@ -53,6 +53,7 @@ function useKLFx(log: KLLogEntry[]) {
   const [spot, setSpot] = useState<KLLogEntry | null>(null);
   const [elim, setElim] = useState<KLLogEntry[]>([]);
   const [reveal, setReveal] = useState<number | null>(null);
+  const [flash, setFlash] = useState<KLLogEntry | null>(null);
   useEffect(() => {
     const last = log.at(-1)?.id ?? 0;
     if (lastId.current === null) {
@@ -75,6 +76,10 @@ function useKLFx(log: KLLogEntry[]) {
         setElim((x) => [...x, e]);
       }
       if (fx.kind === 'reveal') setReveal(e.id);
+      if (fx.kind === 'surprise' || fx.kind === 'linked' || fx.kind === 'ambassadors') {
+        audio.play('thunder');
+        setFlash(e);
+      }
       if (['draw', 'fire', 'jungle', 'rest', 'card'].includes(fx.kind)) setSpot(e);
     }
   }, [log]);
@@ -83,7 +88,7 @@ function useKLFx(log: KLLogEntry[]) {
     const t = setTimeout(() => setSpot(null), 3000);
     return () => clearTimeout(t);
   }, [spot]);
-  return { spot, elim: elim[0] ?? null, dismissElim: () => setElim((x) => x.slice(1)), reveal, dismissReveal: () => setReveal(null) };
+  return { spot, elim: elim[0] ?? null, dismissElim: () => setElim((x) => x.slice(1)), reveal, dismissReveal: () => setReveal(null), flash, dismissFlash: () => setFlash(null) };
 }
 
 export default function KLBoard({ view, send, error, settings, onSettings, onQuit, controls, presence, onReplaceWithBot, banner, hideHand }: Props) {
@@ -93,7 +98,7 @@ export default function KLBoard({ view, send, error, settings, onSettings, onQui
   const fx = useKLFx(view.log);
   const d = view.decision;
   const me = view.viewerId !== null ? view.players[view.viewerId] : null;
-  const activeId = d.kind === 'action' || d.kind === 'vote' || d.kind === 'finalChoice' ? d.playerId : null;
+  const activeId = 'playerId' in d ? d.playerId : null;
   const active = activeId !== null ? view.players[activeId] : null;
   const isCouncil = d.kind === 'vote' && (d.reason === 'council' || d.reason === 'jury');
   const campTeam = isCouncil && d.kind === 'vote' ? d.teamId : me?.alive ? me.team : active?.alive ? active.team : 0;
@@ -165,6 +170,8 @@ export default function KLBoard({ view, send, error, settings, onSettings, onQui
         )}
         <div className="text-sm text-slate-300">{view.merged ? (view.settings.teams === 1 ? '🧍 Chacun pour soi' : '🤝 Tribu réunifiée') : `👥 ${view.teams.length} équipes`}</div>
         {view.jury.length > 0 && <div className="text-sm text-slate-300">⚖️ Jury : {view.jury.length}</div>}
+        {view.linkedActive && <div className="rounded-xl bg-amber-500/20 px-3 py-2 text-sm font-semibold text-amber-200">⛓️ Destins liés</div>}
+        {view.surpriseCouncil && <div className="animate-pulse rounded-xl bg-rose-600 px-3 py-2 text-sm font-bold text-white">⚡ Conseil surprise</div>}
       </section>
 
       <div className="grid gap-4 lg:grid-cols-[1fr_360px]">
@@ -227,11 +234,13 @@ export default function KLBoard({ view, send, error, settings, onSettings, onQui
                             <HealthPips diseases={p.diseases} max={KL_MAX_DISEASES} size="text-base" />
                             <span className="flex gap-1">
                               {p.immune && <span className="rounded-full bg-amber-400 px-1.5 text-xs font-bold text-slate-900" title="Immunisé">📿</span>}
+                              {view.ambassadors.includes(p.id) && <span className="rounded-full bg-cyan-400 px-1.5 text-xs font-bold text-slate-900" title="Ambassadeur">🤝</span>}
                               {p.challengeWins > 0 && <span className="text-xs text-amber-200" title="Épreuves gagnées">🏆{p.challengeWins}</span>}
                             </span>
                           </span>
                           <FormeBar forme={p.forme} />
                           <SickBadge diseases={p.diseases} max={KL_MAX_DISEASES} />
+                          {view.pairs[p.id] !== undefined && <span className="truncate text-xs text-amber-200">⛓️ lié à {view.players[view.pairs[p.id]].name}</span>}
                         </>
                       ) : (
                         <span className="text-xs text-rose-300">
@@ -279,6 +288,7 @@ export default function KLBoard({ view, send, error, settings, onSettings, onQui
         </div>
       )}
 
+      {fx.flash && <EventFlash entry={fx.flash} onDone={fx.dismissFlash} />}
       {fx.elim?.fx?.kind === 'eliminated' && <EliminationOverlay entry={fx.elim} view={view} onDone={fx.dismissElim} />}
       {fx.reveal !== null && !fx.elim && <BallotReveal view={view} onDone={fx.dismissReveal} />}
       {selected !== null && <KLPlayerDetails view={view} id={selected} onClose={() => setSelected(null)} />}
@@ -326,7 +336,7 @@ function DecisionPanel({ view, send, paused }: { view: KLView; send: (c: KLComma
   const owner = view.players[d.playerId];
   const me = view.viewerId !== null ? view.players[view.viewerId] : null;
   if (!me || me.id !== owner.id) {
-    const what = d.kind === 'action' ? 'vit sa journée au camp' : d.kind === 'vote' ? (d.reason === 'jury' ? 'vote en tant que juré' : 'vote') : 'choisit son adversaire';
+    const what = d.kind === 'action' ? 'vit sa journée au camp' : d.kind === 'vote' ? (d.reason === 'jury' ? 'vote en tant que juré' : 'vote') : d.kind === 'ambassador' ? 'négocie en tant qu’ambassadeur' : 'choisit son adversaire';
     return (
       <section className="panel flex items-center gap-3 p-4">
         <AvatarPortrait skin={owner.skin} team={owner.color} size={40} />
@@ -427,8 +437,10 @@ function DecisionPanel({ view, send, paused }: { view: KLView; send: (c: KLComma
         <h2 className="font-display text-2xl text-orange-300">{VOTE_TITLE[d.reason]}</h2>
         <p className="mt-1 text-sm text-slate-300">
           {d.reason === 'council'
-            ? "Écrivez un nom. La personne la plus désignée quitte l'aventure (égalité : tirage au sort)."
-            : d.reason === 'jury'
+            ? `Écrivez un nom. La personne la plus désignée quitte l'aventure (égalité : tirage au sort).${view.linkedActive ? ' ⛓️ Destins liés : son binôme partira avec elle !' : ''}${view.surpriseCouncil ? ' ⚡ Conseil surprise !' : ''}`
+            : d.reason === 'ambassador'
+              ? "Votre ambassadeur négociera avec ceux des autres équipes pour éliminer quelqu'un. S'ils ne s'accordent pas, le sort désignera l'un d'eux !"
+              : d.reason === 'jury'
               ? "Vous êtes juré·e : votez pour le finaliste qui mérite de remporter l'aventure."
               : `Il manque encore ${d.remaining} portion(s) : la personne désignée tombera malade (et perdra de la forme).`}
         </p>
@@ -438,6 +450,7 @@ function DecisionPanel({ view, send, paused }: { view: KLView; send: (c: KLComma
             return (
               <button key={id} className="btn-ghost flex items-center gap-2 py-1.5" onClick={() => send({ type: 'vote', playerId: me.id, targetId: id })}>
                 <AvatarPortrait skin={p.skin} team={p.color} size={28} /> {p.name} {p.diseases > 0 && <span>🤒{p.diseases}</span>}
+                {view.pairs[id] !== undefined && d.reason === 'council' && <span className="text-xs text-amber-200">⛓️ + {view.players[view.pairs[id]].name}</span>}
               </button>
             );
           })}
@@ -447,6 +460,37 @@ function DecisionPanel({ view, send, paused }: { view: KLView; send: (c: KLComma
             📿 Jouer mon collier d'immunité
           </button>
         )}
+      </section>
+    );
+  }
+
+  if (d.kind === 'ambassador') {
+    return (
+      <section className="panel animate-pop border-cyan-400/50 p-5">
+        <h2 className="font-display text-2xl text-cyan-300">🤝 Vous êtes ambassadeur</h2>
+        <p className="mt-1 text-sm text-slate-300">
+          Proposez le nom d'un aventurier à éliminer. Si tous les ambassadeurs donnent le même nom, il part. Sinon, le sort désignera l'un des ambassadeurs… peut-être vous !
+        </p>
+        {d.proposals.length > 0 && (
+          <ul className="mt-2 text-sm text-cyan-100">
+            {d.proposals.map((x) => (
+              <li key={x.from}>
+                {view.players[x.from].name} propose : <b>{view.players[x.target].name}</b>
+              </li>
+            ))}
+          </ul>
+        )}
+        <div className="mt-4 flex flex-wrap gap-2">
+          {d.candidates.map((id) => {
+            const p = view.players[id];
+            const agreed = d.proposals.some((x) => x.target === id);
+            return (
+              <button key={id} className={`${agreed ? 'btn-primary' : 'btn-ghost'} flex items-center gap-2 py-1.5`} onClick={() => send({ type: 'ambassador', playerId: me.id, targetId: id })}>
+                <AvatarPortrait skin={p.skin} team={p.color} size={28} /> {p.name} {agreed && '✓'}
+              </button>
+            );
+          })}
+        </div>
       </section>
     );
   }
@@ -673,7 +717,7 @@ function KLPlayerDetails({ view, id, onClose }: { view: KLView; id: number; onCl
               <ul className="text-sm text-slate-300">
                 {votes.map((r, i) => (
                   <li key={i}>
-                    Jour {r.day} ({{ water: 'eau', food: 'nourriture', council: 'conseil', jury: 'jury' }[r.reason]}) : {view.players[r.ballots[id]].name}
+                    Jour {r.day} ({{ water: 'eau', food: 'nourriture', council: 'conseil', jury: 'jury', ambassador: 'ambassadeur' }[r.reason]}) : {view.players[r.ballots[id]].name}
                   </li>
                 ))}
               </ul>
@@ -738,3 +782,23 @@ function KLGameOver({ view, onClose, onQuit }: { view: KLView; onClose: () => vo
 }
 
 export { CHALLENGES };
+
+/** Annonce plein écran : conseil surprise, destins liés, ambassadeurs. */
+function EventFlash({ entry, onDone }: { entry: KLLogEntry; onDone: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onDone, 4500);
+    return () => clearTimeout(t);
+  }, [entry, onDone]);
+  const kind = entry.fx?.kind;
+  const title = kind === 'surprise' ? '⚡ Conseil surprise !' : kind === 'linked' ? '⛓️ Destins liés !' : '🤝 Les ambassadeurs';
+  const bg = kind === 'surprise' ? 'from-rose-700/95 to-slate-950/95' : kind === 'linked' ? 'from-amber-700/95 to-slate-950/95' : 'from-cyan-700/95 to-slate-950/95';
+  return (
+    <div className={`animate-pop fixed inset-0 z-[58] flex cursor-pointer items-center justify-center bg-gradient-to-b ${bg} p-6`} onClick={onDone}>
+      <div className="max-w-xl text-center">
+        <h2 className="font-display text-5xl text-white drop-shadow sm:text-6xl">{title}</h2>
+        <p className="mt-4 text-lg text-white/90">{entry.text.replace(/^[^ ]+ /, '')}</p>
+        <p className="mt-6 text-xs text-white/50">Touchez pour continuer</p>
+      </div>
+    </div>
+  );
+}

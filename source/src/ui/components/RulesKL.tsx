@@ -20,6 +20,21 @@ export default function RulesKL() {
         <b>Forme (0 à 10) :</b> en forme (6 ou plus), chaque récolte réussie rapporte +1 ; en pleine forme (8 ou plus), une boule blanche en plus ; épuisé (3 ou moins), des boules noires en plus. Elle joue aussi sur les épreuves. Elle baisse avec la faim, la soif, les échecs, et remonte avec le repos, le feu et les récompenses.
       </p>
       <p>
+        <b>Pour accélérer l'aventure :</b>
+      </p>
+      <ul className="ml-5 list-disc space-y-1">
+        <li>
+          🤝 <b>Ambassadeurs</b> : à la réunification, chaque ancienne équipe élit un ambassadeur. Les ambassadeurs proposent chacun un nom : s'ils sont tous
+          d'accord, cette personne part ; sinon, le sort élimine l'un des ambassadeurs.
+        </li>
+        <li>
+          ⛓️ <b>Destins liés</b> : pendant un cycle, les aventuriers sont tirés au sort en binômes. Au conseil, l'éliminé emmène son binôme avec lui ; après la
+          réunification, l'immunité se gagne en binôme (1 fois par partie, 2 à partir de 12 joueurs).
+        </li>
+        <li>⚡ <b>Conseils surprises</b> : un soir de jour 1 ou 2, un conseil peut tomber sans prévenir (2 au maximum par partie).</li>
+        <li>☠️ <b>Épreuves éliminatoires</b> : parfois, l'épreuve d'immunité devient éliminatoire : le dernier quitte l'aventure sur-le-champ (2 au maximum).</li>
+      </ul>
+      <p>
         <b>Finale :</b> à 4, course d'orientation (le dernier est éliminé) ; à 3, les poteaux. Le gagnant choisit son adversaire, et le jury (les éliminés après la
         réunification) vote pour le vainqueur.
       </p>

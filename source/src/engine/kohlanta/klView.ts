@@ -43,6 +43,12 @@ export interface KLView {
   councilTeam: number | null;
   finalists: number[];
   jury: number[];
+  /** Destins liés : partenaire de chacun (pendant le cycle concerné). */
+  pairs: Record<number, number>;
+  linkedActive: boolean;
+  surpriseCouncil: boolean;
+  surpriseCount: number;
+  ambassadors: number[];
   log: KLLogEntry[];
   voteHistory: KLVoteRecord[];
   result: KLResult | null;
@@ -92,6 +98,11 @@ export function buildKLView(engine: KohLantaEngine, viewerId: number | null, rev
     councilTeam: engine.councilTeam,
     finalists: [...engine.finalists],
     jury: [...engine.jury],
+    pairs: engine.linkedActive ? Object.fromEntries(engine.pairs) : {},
+    linkedActive: engine.linkedActive,
+    surpriseCouncil: engine.surpriseCouncil,
+    surpriseCount: engine.surpriseCount,
+    ambassadors: [...engine.ambassadors],
     log,
     voteHistory: engine.voteHistory,
     result: engine.result,

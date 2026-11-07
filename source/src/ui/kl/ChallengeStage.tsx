@@ -25,7 +25,7 @@ interface Props {
   waitingLabel?: string;
 }
 
-const KIND_LABEL = { confort: 'Épreuve de confort', immunite: "Épreuve d'immunité", orientation: 'Finale — Course d’orientation', poteaux: 'Finale — Les poteaux' } as const;
+const KIND_LABEL = { confort: 'Épreuve de confort', immunite: "Épreuve d'immunité", elimination: '☠️ Épreuve éliminatoire', orientation: 'Finale — Course d’orientation', poteaux: 'Finale — Les poteaux' } as const;
 
 export default function ChallengeStage(props: Props) {
   const { challenge, players, teams, viewerId, step, elapsed, countdown, states, currentHuman } = props;
@@ -76,6 +76,8 @@ export default function ChallengeStage(props: Props) {
           <div className="font-display text-2xl text-amber-300">
             {def.emoji} {def.name}
           </div>
+          {challenge.kind === 'elimination' && <div className="text-sm font-bold text-rose-300">Le dernier quitte l'aventure !{challenge.teamMode ? ' (et l’équipe dernière ira au conseil)' : ''}</div>}
+          {challenge.linked && <div className="text-sm text-amber-200">⛓️ Destins liés : l'immunité se gagne en binôme.</div>}
           {challenge.reward && (
             <div className="text-sm text-slate-200">
               À gagner : {REWARDS[challenge.reward].emoji} {REWARDS[challenge.reward].label}

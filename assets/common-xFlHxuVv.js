@@ -1,4 +1,4 @@
-import{s as fc,r as Ci,j as We}from"./index-CCZBalQk.js";/**
+import{s as fc,r as Ci,j as We}from"./index-gpL45Y3f.js";/**
  * @license
  * Copyright 2010-2024 Three.js Authors
  * SPDX-License-Identifier: MIT

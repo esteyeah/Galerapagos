@@ -6,7 +6,7 @@ Construisez le radeau, remplissez les réserves d'eau et de nourriture, et quitt
 - **Hors ligne** : solo contre des bots, ou pass-and-play sur un même appareil.
 - **En ligne** : un joueur crée un salon (code de 5 lettres), les autres le rejoignent depuis leur navigateur. Des bots peuvent compléter la partie, chacun avec son caractère (coopératif, égoïste, paranoïaque).
 - **Modes** : avec météo et ouragan, ou sans météo (fin uniquement par l'évasion ou la mort de tous). Trois difficultés : facile, normal, difficile.
-- **Mode Koh Lanta** (4 à 16 joueurs, 1 à 4 équipes) : cycle confort / immunité / conseil, épreuves en 3D où tout le monde joue en même temps (bots compris), feu à allumer, forme, réunification, finale (orientation, poteaux) et jury.
+- **Mode Koh Lanta** (4 à 16 joueurs, 1 à 4 équipes) : cycle confort / immunité / conseil, épreuves en 3D où tout le monde joue en même temps (bots compris), feu à allumer, forme, réunification, finale (orientation, poteaux) et jury. Pour accélérer : ambassadeurs à la réunification, destins liés, conseils surprises et épreuves éliminatoires.
 - Une histoire d'introduction différente à chaque partie, musique et bruitages générés dans le navigateur.
 
 ## Lancer en local

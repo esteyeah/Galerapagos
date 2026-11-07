@@ -22,7 +22,7 @@ export interface KLPlayerConfig {
   skin?: number;
 }
 
-export type ChallengeKind = 'confort' | 'immunite' | 'orientation' | 'poteaux';
+export type ChallengeKind = 'confort' | 'immunite' | 'elimination' | 'orientation' | 'poteaux';
 export type ChallengeId = 'parcours' | 'paresseux' | 'poteaux' | 'orientation' | 'totems' | 'cocos' | 'puzzle';
 
 export interface ChallengeInfo {
@@ -34,18 +34,21 @@ export interface ChallengeInfo {
   seed: number;
   /** Récompense mise en jeu pour une épreuve de confort. */
   reward?: RewardId;
+  /** Destins liés : l'immunité se gagne par binôme. */
+  linked?: boolean;
 }
 
 export type RewardId = 'vivres' | 'peche' | 'feu' | 'repos' | 'soins' | 'eau';
 
 export type KLAction = 'fish' | 'water' | 'wood' | 'jungle' | 'rest' | 'fire';
-export type KLVoteReason = 'water' | 'food' | 'council' | 'jury';
+export type KLVoteReason = 'water' | 'food' | 'council' | 'jury' | 'ambassador';
 
 export type KLDecision =
   | { kind: 'challenge'; challenge: ChallengeInfo }
   | { kind: 'action'; playerId: number; teamId: number }
   | { kind: 'vote'; playerId: number; candidates: number[]; reason: KLVoteReason; teamId: number; canNecklace: boolean; remaining: number }
   | { kind: 'finalChoice'; playerId: number; options: number[] }
+  | { kind: 'ambassador'; playerId: number; proposals: { from: number; target: number }[]; candidates: number[] }
   | { kind: 'gameover' };
 
 export type KLCommand =
@@ -54,7 +57,8 @@ export type KLCommand =
   | { type: 'give'; playerId: number; cardId: string; targetId: number }
   | { type: 'vote'; playerId: number; targetId: number }
   | { type: 'necklace'; playerId: number }
-  | { type: 'finalChoice'; playerId: number; targetId: number };
+  | { type: 'finalChoice'; playerId: number; targetId: number }
+  | { type: 'ambassador'; playerId: number; targetId: number };
 
 export type KLFx =
   | { kind: 'draw'; playerId: number; action: 'fish' | 'water' | 'wood'; balls: ('w' | 'b')[]; gain: number }
@@ -66,7 +70,10 @@ export type KLFx =
   | { kind: 'card'; playerId: number; item: KLItemType; targetId?: number }
   | { kind: 'vote'; playerId: number }
   | { kind: 'challenge'; kind2: ChallengeKind; game: ChallengeId }
-  | { kind: 'reveal'; council: true };
+  | { kind: 'reveal'; council: true }
+  | { kind: 'surprise' }
+  | { kind: 'linked' }
+  | { kind: 'ambassadors' };
 
 export interface KLLogEntry {
   id: number;

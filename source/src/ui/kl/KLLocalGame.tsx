@@ -24,7 +24,7 @@ export default function KLLocalGame({ configs, klSettings, settings, onSettings,
   useEffect(() => engine.subscribe(() => setVersion((v) => v + 1)), [engine]);
 
   const d = engine.decision;
-  const owner = d.kind === 'action' || d.kind === 'vote' || d.kind === 'finalChoice' ? engine.player(d.playerId) : null;
+  const owner = 'playerId' in d ? engine.player(d.playerId) : null;
 
   // Bots (hors épreuves)
   useEffect(() => {
